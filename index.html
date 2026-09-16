@@ -214,6 +214,10 @@
 
   .toast { position: fixed; bottom: 96px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: var(--bg); padding: 11px 18px; border-radius: 999px; font-size: 12.5px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .25s ease, transform .25s ease; z-index: 50; white-space: nowrap; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .challenge-card,.quiz-card{border:1px solid var(--line);border-radius:20px;padding:16px;background:var(--card);box-shadow:0 8px 24px rgba(30,25,70,.06);margin-top:12px}
+  .challenge-card{background:linear-gradient(135deg,#6C4CF1,#3E7BFA);color:#fff;border:0}
+  .challenge-top{display:flex;justify-content:space-between;align-items:center}.challenge-kicker{font-size:10px;font-weight:800;letter-spacing:.12em;opacity:.8}.challenge-title{font-family:'Outfit',sans-serif;font-size:20px;font-weight:800;margin-top:4px}.challenge-desc{font-size:12px;opacity:.9;margin:6px 0 14px}.challenge-btn,.quiz-option,.quiz-next{border:0;border-radius:13px;padding:12px 14px;font-weight:800;cursor:pointer}.challenge-btn{background:#fff;color:#4d42c7}.quiz-card{margin-top:8px}.quiz-progress{font-size:11px;font-weight:800;color:var(--ink-faint);margin-bottom:10px}.quiz-question{font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;margin-bottom:14px}.quiz-option{display:block;width:100%;text-align:left;background:var(--surface);color:var(--ink);margin:8px 0;border:1px solid var(--line)}.quiz-option.correct{background:#e9f8ef;border-color:#45b96b}.quiz-option.wrong{background:#fff0f0;border-color:#e06a6a}.quiz-result{text-align:center;padding:18px}.quiz-score{font-family:'Outfit',sans-serif;font-size:38px;font-weight:900}.quiz-next{width:100%;background:var(--ink);color:var(--bg);margin-top:12px}
 </style>
 </head>
 <body>
@@ -285,6 +289,14 @@
       <div class="ai-chevron"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
     </div>
 
+
+    <div class="section-heading"><h3>Daily Challenge</h3></div>
+    <div class="challenge-card">
+      <div class="challenge-top"><div><div class="challenge-kicker">TODAY'S MINI QUIZ</div><div class="challenge-title">Test your English 🎯</div></div><div style="font-size:28px">🧠</div></div>
+      <div class="challenge-desc">5 quick questions · Earn XP · Improve your accuracy</div>
+      <button class="challenge-btn" data-goto="quiz">Start Challenge →</button>
+    </div>
+
     <div class="section-heading"><h3>Build Spoken English</h3></div>
     <div class="grid-2">
       <button class="learn-card vocab" data-goto="words" data-tab="vocab">
@@ -347,6 +359,15 @@
       <input class="chat-input" id="chatInput" type="text" placeholder="Type a message…" autocomplete="off">
       <button class="chat-send" id="chatSend" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12L20 4L14 20L11 13L4 12Z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
     </div>
+  </section>
+
+
+  <!-- ============ QUIZ ============ -->
+  <section class="screen" data-screen="quiz">
+    <div class="page-header"><h2>Daily Challenge</h2></div>
+    <div class="page-sub">Choose the correct English answer. Your score is saved automatically.</div>
+    <div class="quiz-card" id="quizBox"></div>
+    <div class="spacer-40"></div>
   </section>
 
   <!-- ============ PROFILE ============ -->
@@ -778,6 +799,36 @@
   document.getElementById('chatSend').addEventListener('click', sendChat);
   document.getElementById('chatInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') sendChat(); });
 
+
+  /* ---------------- Daily Quiz ---------------- */
+  const QUIZ = [
+    {q:'நான் வருகிறேன்', a:['I am coming','I am going','I am busy','Wait a minute'], c:0},
+    {q:'நான் போகிறேன்', a:['Come with me','I don’t know','I am going','I am coming'], c:2},
+    {q:'எனக்குத் தெரியாது', a:['I am busy','I don’t know','Wait a minute','Come with me'], c:1},
+    {q:'ஒரு நிமிடம் காத்திருங்கள்', a:['Wait a minute','I am coming','I am going','Come with me'], c:0},
+    {q:'என்னுடன் வாருங்கள்', a:['I am busy','I don’t know','Come with me','I am coming'], c:2}
+  ];
+  let quizIndex=0, quizScore=0, quizLocked=false;
+  function renderQuiz(){
+    const box=document.getElementById('quizBox'); if(!box)return;
+    if(quizIndex>=QUIZ.length){
+      const pct=Math.round((quizScore/QUIZ.length)*100);
+      box.innerHTML='<div class="quiz-result"><div style="font-size:42px">🎉</div><div class="quiz-score">'+quizScore+'/5</div><div style="font-weight:800;margin-top:4px">'+pct+'% Accuracy</div><div class="page-sub" style="margin-top:8px">Great practice! Keep speaking every day.</div><button class="quiz-next" id="quizAgain">Try Again</button></div>';
+      state.lessons=(state.lessons||0)+1; state.accuracy=pct; saveState(); renderHome(); renderXp(); renderBadges(); addXp(10); document.getElementById('quizAgain').onclick=()=>{quizIndex=0;quizScore=0;quizLocked=false;renderQuiz();}; return;
+    }
+    const item=QUIZ[quizIndex]; quizLocked=false;
+    box.innerHTML='<div class="quiz-progress">QUESTION '+(quizIndex+1)+' OF '+QUIZ.length+'</div><div class="quiz-question">'+item.q+'</div><div id="quizOptions"></div><div id="quizFeedback" style="font-weight:800;min-height:20px;margin-top:10px"></div>';
+    item.a.forEach((x,i)=>{const b=document.createElement('button');b.className='quiz-option';b.textContent=x;b.onclick=()=>answerQuiz(i,b);document.getElementById('quizOptions').appendChild(b);});
+  }
+  function answerQuiz(choice,btn){
+    if(quizLocked)return; quizLocked=true; const item=QUIZ[quizIndex];
+    document.querySelectorAll('.quiz-option').forEach((b,i)=>{b.disabled=true;if(i===item.c)b.classList.add('correct');});
+    const fb=document.getElementById('quizFeedback');
+    if(choice===item.c){quizScore++;fb.textContent='Correct! ✓';addXp(5);} else {btn.classList.add('wrong');fb.textContent='Not quite — correct answer: '+item.a[item.c];}
+    state.accuracy=Math.round((quizScore/(quizIndex+1))*100); saveState(); renderHome();
+    setTimeout(()=>{quizIndex++;renderQuiz();},700);
+  }
+
   /* ---------------- Profile ---------------- */
   document.getElementById('resetBtn').addEventListener('click', function () {
     if (confirm('Reset all progress? This cannot be undone.')) {
@@ -834,6 +885,7 @@
   renderFlashcards();
   renderGrammar();
   renderPhrases();
+  renderQuiz();
   renderXp();
   renderBadges();
   seedChat();
