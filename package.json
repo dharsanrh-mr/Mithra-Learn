@@ -1,0 +1,7 @@
+{
+  "name": "mithra-learn-ai",
+  "private": true,
+  "scripts": {"dev":"convex dev","deploy":"convex deploy"},
+  "dependencies": {"convex":"latest"},
+  "devDependencies": {"typescript":"latest"}
+}
