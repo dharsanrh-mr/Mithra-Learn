@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
-<title>LingoLoop</title>
+<title>LingoLoop — Learn Tamil</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #F3F1FB;
@@ -28,6 +28,8 @@
     --rose-2: #FF8FB0;
     --flame-1: #FF7A45;
     --flame-2: #FFB648;
+    --green-1: #22C55E;
+    --red-1: #F04452;
     --shadow-soft: 0 10px 24px -12px rgba(43, 25, 92, 0.18);
     --shadow-card: 0 14px 30px -16px rgba(43, 25, 92, 0.28);
     --radius-lg: 26px;
@@ -51,19 +53,13 @@
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
   html, body {
-    margin: 0;
-    padding: 0;
+    margin: 0; padding: 0;
     background: var(--bg);
     color: var(--ink);
     font-family: 'Inter', system-ui, sans-serif;
     height: 100%;
   }
-
-  body {
-    display: flex;
-    justify-content: center;
-    min-height: 100vh;
-  }
+  body { display: flex; justify-content: center; min-height: 100vh; }
 
   .device {
     width: 100%;
@@ -75,193 +71,120 @@
     overflow-x: hidden;
   }
 
-  h1, h2, h3, .display {
-    font-family: 'Outfit', sans-serif;
-    margin: 0;
-  }
+  .tamil { font-family: 'Noto Sans Tamil', sans-serif; }
 
-  /* ---------- Top bar ---------- */
-  .topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 22px 20px 6px;
-  }
+  h1, h2, h3, .display { font-family: 'Outfit', sans-serif; margin: 0; }
 
-  .greeting-label {
-    font-size: 13px;
-    color: var(--ink-faint);
-    font-weight: 500;
-  }
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadeIn .2s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px);} to { opacity: 1; transform: translateY(0);} }
 
-  .greeting-name {
-    font-family: 'Outfit', sans-serif;
-    font-size: 21px;
-    font-weight: 700;
-    margin-top: 2px;
+  /* ---------- Sub-page header ---------- */
+  .page-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 22px 20px 4px;
   }
+  .page-header h2 { font-size: 19px; font-weight: 700; }
+  .page-header .icon-btn { flex-shrink: 0; }
+  .page-sub { padding: 0 20px; color: var(--ink-soft); font-size: 12.5px; margin: 4px 0 18px; }
 
-  .topbar-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  /* ---------- Top bar (home) ---------- */
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 20px 4px; }
+  .greeting-label { font-size: 13px; color: var(--ink-faint); font-weight: 500; }
+  .greeting-name { font-family: 'Outfit', sans-serif; font-size: 21px; font-weight: 700; margin-top: 2px; }
+  .lang-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--surface-2); border: 1px solid var(--line);
+    padding: 4px 10px 4px 8px; border-radius: 999px;
+    font-size: 11px; font-weight: 600; color: var(--ink-soft);
+    margin-top: 8px;
   }
-
+  .topbar-actions { display: flex; align-items: center; gap: 10px; }
   .icon-btn {
-    width: 42px;
-    height: 42px;
-    border-radius: 14px;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: var(--shadow-soft);
+    width: 42px; height: 42px; border-radius: 14px;
+    background: var(--surface); border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; box-shadow: var(--shadow-soft);
     transition: transform .15s ease;
   }
   .icon-btn:active { transform: scale(0.92); }
   .icon-btn svg { width: 19px; height: 19px; }
 
   .streak-pill {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    display: flex; align-items: center; gap: 6px;
     background: linear-gradient(135deg, var(--flame-1), var(--flame-2));
-    padding: 8px 13px 8px 10px;
-    border-radius: 999px;
+    padding: 8px 13px 8px 10px; border-radius: 999px;
     box-shadow: 0 8px 18px -8px rgba(255, 122, 69, 0.55);
   }
   .streak-pill svg { width: 16px; height: 16px; }
-  .streak-count {
-    color: #fff;
-    font-weight: 700;
-    font-size: 14px;
-    font-family: 'Outfit', sans-serif;
-  }
+  .streak-count { color: #fff; font-weight: 700; font-size: 14px; font-family: 'Outfit', sans-serif; }
 
   /* ---------- Progress hero ---------- */
   .progress-hero {
-    margin: 18px 20px 0;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-lg);
-    padding: 22px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    box-shadow: var(--shadow-card);
-    position: relative;
-    overflow: hidden;
+    margin: 18px 20px 0; background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-lg); padding: 22px; display: flex; align-items: center; gap: 20px;
+    box-shadow: var(--shadow-card); position: relative; overflow: hidden;
   }
-
   .progress-hero::before {
-    content: "";
-    position: absolute;
-    inset: 0;
+    content: ""; position: absolute; inset: 0;
     background: radial-gradient(120px 120px at 100% 0%, rgba(108,76,241,0.10), transparent 70%);
     pointer-events: none;
   }
-
   .ring-wrap { position: relative; width: 96px; height: 96px; flex-shrink: 0; }
   .ring-wrap svg { transform: rotate(-90deg); width: 96px; height: 96px; }
   .ring-track { fill: none; stroke: var(--surface-2); stroke-width: 9; }
   .ring-value { fill: none; stroke-width: 9; stroke-linecap: round; transition: stroke-dashoffset .6s ease; }
-  .ring-center {
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-  }
+  .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   .ring-pct { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 19px; }
   .ring-sub { font-size: 9px; color: var(--ink-faint); font-weight: 600; }
-
   .hero-copy h2 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
   .hero-copy p { margin: 0; font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; }
   .hero-stats { display: flex; gap: 14px; margin-top: 10px; }
   .hero-stat { font-size: 11.5px; color: var(--ink-soft); }
   .hero-stat b { color: var(--ink); font-family: 'Outfit', sans-serif; font-size: 13px; display: block; }
 
-  /* ---------- Speaking hero button ---------- */
+  /* ---------- Speak hero card (home) ---------- */
   .speak-card {
-    margin: 18px 20px 0;
-    border-radius: var(--radius-lg);
-    padding: 26px 22px;
+    margin: 18px 20px 0; border-radius: var(--radius-lg); padding: 26px 22px;
     background: linear-gradient(135deg, var(--violet-1), var(--blue-1) 70%);
     box-shadow: 0 20px 34px -16px rgba(108, 76, 241, 0.55);
-    position: relative;
-    overflow: hidden;
-    color: #fff;
-    cursor: pointer;
-    border: none;
-    width: calc(100% - 40px);
-    text-align: left;
-    font-family: inherit;
+    position: relative; overflow: hidden; color: #fff; cursor: pointer; border: none;
+    width: calc(100% - 40px); text-align: left; font-family: inherit;
   }
   .speak-card::after {
-    content: "";
-    position: absolute;
-    width: 220px; height: 220px;
+    content: ""; position: absolute; width: 220px; height: 220px;
     background: radial-gradient(circle, rgba(255,255,255,0.16), transparent 65%);
-    top: -80px; right: -60px;
-    border-radius: 50%;
+    top: -80px; right: -60px; border-radius: 50%;
   }
   .speak-top { display: flex; align-items: center; justify-content: space-between; }
   .speak-label { font-size: 12px; letter-spacing: 0.02em; opacity: 0.85; font-weight: 600; }
   .speak-title { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 700; margin-top: 6px; }
   .speak-desc { font-size: 12.5px; opacity: 0.88; margin-top: 6px; max-width: 220px; line-height: 1.5; }
-
   .mic-orb {
-    width: 62px; height: 62px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.18);
-    border: 1px solid rgba(255,255,255,0.35);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    position: relative;
+    width: 62px; height: 62px; border-radius: 50%; background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.35); display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; position: relative;
   }
   .mic-orb svg { width: 26px; height: 26px; }
   .mic-orb::before {
-    content: "";
-    position: absolute; inset: -8px;
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.35);
-    animation: pulse-ring 2.4s ease-out infinite;
+    content: ""; position: absolute; inset: -8px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.35); animation: pulse-ring 2.4s ease-out infinite;
   }
-  @keyframes pulse-ring {
-    0% { transform: scale(0.85); opacity: 0.9; }
-    100% { transform: scale(1.35); opacity: 0; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .mic-orb::before { animation: none; }
-  }
+  @keyframes pulse-ring { 0% { transform: scale(0.85); opacity: 0.9; } 100% { transform: scale(1.35); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .mic-orb::before { animation: none; } }
 
-  /* ---------- Section heading ---------- */
-  .section-heading {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin: 26px 20px 12px;
-  }
+  .section-heading { display: flex; align-items: baseline; justify-content: space-between; margin: 26px 20px 12px; }
   .section-heading h3 { font-size: 15.5px; font-weight: 700; }
-  .section-heading a { font-size: 12px; color: var(--violet-1); font-weight: 600; text-decoration: none; }
+  .section-heading a { font-size: 12px; color: var(--violet-1); font-weight: 600; text-decoration: none; cursor: pointer; }
 
-  /* ---------- AI conversation card ---------- */
   .ai-card {
-    margin: 0 20px;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-md);
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    box-shadow: var(--shadow-soft);
-    cursor: pointer;
+    margin: 0 20px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md);
+    padding: 16px; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-soft); cursor: pointer;
   }
   .ai-avatar {
     width: 48px; height: 48px; border-radius: 14px;
     background: linear-gradient(135deg, var(--teal-1), var(--teal-2));
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     box-shadow: 0 8px 16px -8px rgba(22,191,166,0.5);
   }
   .ai-avatar svg { width: 22px; height: 22px; color: #fff; }
@@ -270,285 +193,336 @@
   .ai-chevron { margin-left: auto; color: var(--ink-faint); }
   .ai-chevron svg { width: 16px; height: 16px; }
 
-  /* ---------- Learning cards grid ---------- */
-  .grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    margin: 0 20px;
-  }
-
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 0 20px; }
   .learn-card {
-    border-radius: var(--radius-md);
-    padding: 18px 16px;
-    color: #fff;
-    position: relative;
-    overflow: hidden;
-    min-height: 128px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    cursor: pointer;
-    border: none;
-    text-align: left;
-    font-family: inherit;
-    box-shadow: var(--shadow-card);
+    border-radius: var(--radius-md); padding: 18px 16px; color: #fff; position: relative; overflow: hidden;
+    min-height: 128px; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer;
+    border: none; text-align: left; font-family: inherit; box-shadow: var(--shadow-card);
   }
   .learn-card.vocab { background: linear-gradient(150deg, var(--amber-1), var(--amber-2)); }
   .learn-card.grammar { background: linear-gradient(150deg, var(--rose-1), var(--rose-2)); }
-
   .learn-card::after {
-    content: "";
-    position: absolute;
-    width: 110px; height: 110px;
+    content: ""; position: absolute; width: 110px; height: 110px;
     background: radial-gradient(circle, rgba(255,255,255,0.22), transparent 70%);
-    bottom: -50px; right: -30px;
-    border-radius: 50%;
+    bottom: -50px; right: -30px; border-radius: 50%;
   }
-  .learn-card-icon {
-    width: 34px; height: 34px;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.24);
-    display: flex; align-items: center; justify-content: center;
-  }
+  .learn-card-icon { width: 34px; height: 34px; border-radius: 10px; background: rgba(255,255,255,0.24); display: flex; align-items: center; justify-content: center; }
   .learn-card-icon svg { width: 17px; height: 17px; }
   .learn-card h4 { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; margin: 0 0 2px; }
   .learn-card p { margin: 0; font-size: 11.5px; opacity: 0.9; }
 
-  /* ---------- Dashboard ---------- */
-  .dashboard {
-    margin: 0 20px;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-lg);
-    padding: 18px;
-    box-shadow: var(--shadow-soft);
-  }
-  .dash-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-  .dash-stat {
-    background: var(--surface-2);
-    border-radius: var(--radius-sm);
-    padding: 12px 10px;
-    text-align: center;
-  }
+  .dashboard { margin: 0 20px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 18px; box-shadow: var(--shadow-soft); }
+  .dash-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+  .dash-stat { background: var(--surface-2); border-radius: var(--radius-sm); padding: 12px 10px; text-align: center; }
   .dash-stat .num { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 18px; }
   .dash-stat .lbl { font-size: 10px; color: var(--ink-faint); margin-top: 2px; font-weight: 600; }
-
-  .bars {
-    display: flex;
-    align-items: flex-end;
-    gap: 7px;
-    height: 74px;
-    padding: 0 2px;
-  }
+  .bars { display: flex; align-items: flex-end; gap: 7px; height: 74px; padding: 0 2px; }
   .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
-  .bar {
-    width: 100%;
-    border-radius: 7px 7px 3px 3px;
-    background: var(--surface-2);
-    position: relative;
-    height: 54px;
-    display: flex;
-    align-items: flex-end;
-    overflow: hidden;
-  }
-  .bar-fill {
-    width: 100%;
-    border-radius: 7px 7px 3px 3px;
-    background: linear-gradient(180deg, var(--violet-2), var(--violet-1));
-  }
+  .bar { width: 100%; border-radius: 7px 7px 3px 3px; background: var(--surface-2); position: relative; height: 54px; display: flex; align-items: flex-end; overflow: hidden; }
+  .bar-fill { width: 100%; border-radius: 7px 7px 3px 3px; background: linear-gradient(180deg, var(--violet-2), var(--violet-1)); }
   .bar-col.today .bar-fill { background: linear-gradient(180deg, var(--teal-2), var(--teal-1)); }
   .bar-day { font-size: 9.5px; color: var(--ink-faint); font-weight: 600; }
+  .spacer-40 { height: 8px; }
+
+  /* ---------- Tabs (Words screen) ---------- */
+  .tabs { display: flex; gap: 8px; margin: 4px 20px 18px; background: var(--surface-2); padding: 4px; border-radius: 14px; }
+  .tab {
+    flex: 1; text-align: center; padding: 9px 0; border-radius: 11px; border: none; background: transparent;
+    font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; color: var(--ink-soft); cursor: pointer;
+  }
+  .tab.active { background: var(--surface); color: var(--violet-1); box-shadow: var(--shadow-soft); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ---------- Flashcards ---------- */
+  .flash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 20px 8px; }
+  .flashcard {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md);
+    padding: 16px 12px; min-height: 96px; box-shadow: var(--shadow-soft); cursor: pointer;
+    display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+    gap: 4px; position: relative;
+  }
+  .flashcard .front { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 15px; }
+  .flashcard .back { display: none; color: var(--violet-1); font-weight: 700; font-size: 16px; }
+  .flashcard .translit { font-size: 10.5px; color: var(--ink-faint); }
+  .flashcard.flipped .front { display: none; }
+  .flashcard.flipped .back { display: block; }
+  .flashcard .known-dot {
+    position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--line);
+  }
+  .flashcard.known .known-dot { background: var(--green-1); }
+  .flash-hint { text-align: center; font-size: 11px; color: var(--ink-faint); padding: 0 20px 20px; }
+
+  /* ---------- Accordion (Grammar) ---------- */
+  .accordion { padding: 0 20px 8px; display: flex; flex-direction: column; gap: 10px; }
+  .accordion-item { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-soft); }
+  .accordion-header {
+    display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; background: none; border: none;
+    width: 100%; text-align: left; font-family: inherit;
+  }
+  .accordion-num {
+    width: 30px; height: 30px; border-radius: 9px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--rose-1), var(--rose-2)); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 13px;
+  }
+  .accordion-title { font-weight: 700; font-size: 13.5px; flex: 1; }
+  .accordion-chevron { color: var(--ink-faint); transition: transform .2s ease; flex-shrink: 0; }
+  .accordion-chevron svg { width: 15px; height: 15px; }
+  .accordion-item.open .accordion-chevron { transform: rotate(90deg); }
+  .accordion-body { display: none; padding: 0 16px 16px 58px; font-size: 12.5px; color: var(--ink-soft); line-height: 1.6; }
+  .accordion-item.open .accordion-body { display: block; }
+  .accordion-example { margin-top: 8px; background: var(--surface-2); border-radius: 10px; padding: 8px 10px; }
+  .accordion-example .ex-ta { font-family: 'Noto Sans Tamil', sans-serif; font-weight: 600; color: var(--ink); font-size: 13px; }
+  .accordion-example .ex-en { font-size: 11px; color: var(--ink-faint); margin-top: 2px; }
+
+  /* ---------- Speak screen ---------- */
+  .phrase-list { padding: 0 20px 8px; display: flex; flex-direction: column; gap: 10px; }
+  .phrase-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 16px; box-shadow: var(--shadow-soft); }
+  .phrase-target { font-family: 'Noto Sans Tamil', sans-serif; font-weight: 700; font-size: 17px; }
+  .phrase-translit { font-size: 11.5px; color: var(--ink-faint); margin-top: 2px; }
+  .phrase-en { font-size: 12px; color: var(--ink-soft); margin-top: 4px; }
+  .phrase-controls { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+  .rec-btn {
+    width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--violet-1), var(--blue-1));
+    display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 16px -8px rgba(108,76,241,0.5);
+  }
+  .rec-btn.recording { background: linear-gradient(135deg, var(--red-1), #ff8a7a); animation: recPulse 1.1s ease-in-out infinite; }
+  @keyframes recPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+  .rec-btn svg { width: 18px; height: 18px; }
+  .phrase-feedback { flex: 1; font-size: 12px; color: var(--ink-faint); }
+  .phrase-feedback.good { color: var(--green-1); font-weight: 600; }
+  .phrase-feedback.bad { color: var(--red-1); font-weight: 600; }
+  .transcript-box { margin-top: 10px; background: var(--surface-2); border-radius: 10px; padding: 8px 10px; font-size: 12.5px; color: var(--ink-soft); min-height: 20px; }
+  .speak-support-note { margin: 0 20px 16px; font-size: 11.5px; color: var(--ink-faint); background: var(--surface-2); border-radius: 12px; padding: 10px 12px; }
+
+  /* ---------- Chat screen ---------- */
+  .chat-wrap { display: flex; flex-direction: column; padding: 0 20px; }
+  .chat-messages { display: flex; flex-direction: column; gap: 10px; padding: 6px 0 14px; min-height: 200px; }
+  .msg { max-width: 82%; padding: 10px 13px; border-radius: 16px; font-size: 13px; line-height: 1.5; }
+  .msg.ai { align-self: flex-start; background: var(--surface); border: 1px solid var(--line); border-bottom-left-radius: 4px; box-shadow: var(--shadow-soft); }
+  .msg.user { align-self: flex-end; background: linear-gradient(135deg, var(--violet-1), var(--blue-1)); color: #fff; border-bottom-right-radius: 4px; }
+  .msg.typing { align-self: flex-start; display: flex; gap: 4px; align-items: center; padding: 13px 15px; }
+  .typing-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-faint); animation: typingBounce 1.2s infinite ease-in-out; }
+  .typing-dot:nth-child(2) { animation-delay: .15s; }
+  .typing-dot:nth-child(3) { animation-delay: .3s; }
+  @keyframes typingBounce { 0%,60%,100% { transform: translateY(0); opacity: .5; } 30% { transform: translateY(-4px); opacity: 1; } }
+  .chat-input-row {
+    position: fixed; bottom: 74px; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px;
+    display: flex; gap: 8px; padding: 10px 20px; background: var(--bg); border-top: 1px solid var(--line);
+  }
+  .chat-input {
+    flex: 1; border-radius: 999px; border: 1px solid var(--line); background: var(--surface);
+    padding: 11px 16px; font-size: 13px; color: var(--ink); font-family: inherit; outline: none;
+  }
+  .chat-send {
+    width: 42px; height: 42px; border-radius: 50%; border: none; cursor: pointer; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--violet-1), var(--blue-1)); display: flex; align-items: center; justify-content: center;
+  }
+  .chat-send svg { width: 17px; height: 17px; }
+  .chat-note { text-align: center; font-size: 10.5px; color: var(--ink-faint); padding: 4px 0 100px; }
+
+  /* ---------- Profile screen ---------- */
+  .profile-card { margin: 0 20px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 16px; box-shadow: var(--shadow-soft); display: flex; align-items: center; justify-content: space-between; }
+  .profile-card .label { font-size: 13.5px; font-weight: 600; }
+  .profile-card .sub { font-size: 11.5px; color: var(--ink-faint); margin-top: 2px; }
+  .switch { width: 44px; height: 26px; border-radius: 999px; background: var(--line); position: relative; cursor: pointer; flex-shrink: 0; border: none; }
+  .switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform .2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+  .switch.on { background: var(--violet-1); }
+  .switch.on::after { transform: translateX(18px); }
+  .danger-btn {
+    margin: 4px 20px 0; width: calc(100% - 40px); padding: 13px; border-radius: 14px; border: 1px solid var(--line);
+    background: var(--surface); color: var(--red-1); font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit;
+  }
 
   /* ---------- Bottom nav ---------- */
   .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 430px;
-    background: var(--bg-elevated);
-    border-top: 1px solid var(--line);
-    display: flex;
-    justify-content: space-around;
-    padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
-    box-shadow: 0 -8px 24px -16px rgba(43,25,92,0.25);
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px;
+    background: var(--bg-elevated); border-top: 1px solid var(--line); display: flex; justify-content: space-around;
+    padding: 10px 4px calc(10px + env(safe-area-inset-bottom)); box-shadow: 0 -8px 24px -16px rgba(43,25,92,0.25); z-index: 40;
   }
   .nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    color: var(--ink-faint);
-    background: none;
-    border: none;
-    font-family: 'Inter', sans-serif;
-    font-size: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    padding: 4px 10px;
-    border-radius: 12px;
-    transition: color .15s ease;
+    display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--ink-faint); background: none;
+    border: none; font-family: 'Inter', sans-serif; font-size: 9.5px; font-weight: 600; cursor: pointer;
+    padding: 4px 8px; border-radius: 12px; transition: color .15s ease;
   }
-  .nav-item svg { width: 21px; height: 21px; }
+  .nav-item svg { width: 20px; height: 20px; }
   .nav-item.active { color: var(--violet-1); }
 
-  /* ---------- Toast ---------- */
   .toast {
-    position: fixed;
-    bottom: 96px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--ink);
-    color: var(--bg);
-    padding: 11px 18px;
-    border-radius: 999px;
-    font-size: 12.5px;
-    font-weight: 600;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .25s ease, transform .25s ease;
-    z-index: 50;
-    white-space: nowrap;
+    position: fixed; bottom: 96px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink);
+    color: var(--bg); padding: 11px 18px; border-radius: 999px; font-size: 12.5px; font-weight: 600; opacity: 0;
+    pointer-events: none; transition: opacity .25s ease, transform .25s ease; z-index: 50; white-space: nowrap;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-  .spacer-40 { height: 8px; }
 </style>
 </head>
 <body>
 <div class="device">
 
-  <div class="topbar">
-    <div>
-      <div class="greeting-label" id="greetingLabel">Good morning</div>
-      <div class="greeting-name">Keep it up, Asha</div>
-    </div>
-    <div class="topbar-actions">
-      <div class="streak-pill" id="streakPill" title="Daily streak">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C12 2 7 7.5 7 12.5C7 15.5 9 18 12 18C15 18 17 15.5 17 12.5C17 11 16.3 9.8 15.6 8.8C15.6 10 15 11 14 11.3C14.5 9 13.3 6.5 11.5 5.3C11.9 6.7 11.2 7.8 10.3 8.6C8.9 9.9 8 11.3 8 13" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="rgba(255,255,255,0.25)"/></svg>
-        <span class="streak-count" id="streakCount">0</span>
+  <!-- ============ HOME ============ -->
+  <section class="screen active" data-screen="home">
+    <div class="topbar">
+      <div>
+        <div class="greeting-label" id="greetingLabel">Good morning</div>
+        <div class="greeting-name">Vanakkam, Asha</div>
+        <div class="lang-chip">🇮🇳 Learning Tamil</div>
       </div>
-      <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode">
-        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3V4.5M12 19.5V21M4.5 12H3M6.3 6.3L5.3 5.3M17.7 6.3L18.7 5.3M6.3 17.7L5.3 18.7M17.7 17.7L18.7 18.7M21 12H19.5M16.5 12C16.5 14.4853 14.4853 16.5 12 16.5C9.51472 16.5 7.5 14.4853 7.5 12C7.5 9.51472 9.51472 7.5 12 7.5C14.4853 7.5 16.5 9.51472 16.5 12Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <div class="topbar-actions">
+        <div class="streak-pill" title="Daily streak">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C12 2 7 7.5 7 12.5C7 15.5 9 18 12 18C15 18 17 15.5 17 12.5C17 11 16.3 9.8 15.6 8.8C15.6 10 15 11 14 11.3C14.5 9 13.3 6.5 11.5 5.3C11.9 6.7 11.2 7.8 10.3 8.6C8.9 9.9 8 11.3 8 13" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="rgba(255,255,255,0.25)"/></svg>
+          <span class="streak-count" id="streakCount">0</span>
+        </div>
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode">
+          <svg id="themeIcon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3V4.5M12 19.5V21M4.5 12H3M6.3 6.3L5.3 5.3M17.7 6.3L18.7 5.3M6.3 17.7L5.3 18.7M17.7 17.7L18.7 18.7M21 12H19.5M16.5 12C16.5 14.4853 14.4853 16.5 12 16.5C9.51472 16.5 7.5 14.4853 7.5 12C7.5 9.51472 9.51472 7.5 12 7.5C14.4853 7.5 16.5 9.51472 16.5 12Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="progress-hero">
+      <div class="ring-wrap">
+        <svg viewBox="0 0 96 96">
+          <circle class="ring-track" cx="48" cy="48" r="40"/>
+          <circle class="ring-value" id="ringValue" cx="48" cy="48" r="40" stroke="url(#ringGrad)" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
+          <defs><linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6C4CF1"/><stop offset="100%" stop-color="#3E7BFA"/></linearGradient></defs>
+        </svg>
+        <div class="ring-center"><div class="ring-pct" id="ringPct">0%</div><div class="ring-sub">Level 3</div></div>
+      </div>
+      <div class="hero-copy">
+        <h2>Today's goal</h2>
+        <p>15 minutes of practice keeps your streak alive and locks in new words.</p>
+        <div class="hero-stats">
+          <div class="hero-stat"><b id="wordsLearned">0</b>words</div>
+          <div class="hero-stat"><b id="minutesToday">0</b>min today</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="speak-card" data-goto="speak">
+      <div class="speak-top">
+        <div>
+          <div class="speak-label">SPEAKING PRACTICE</div>
+          <div class="speak-title">Talk it out loud</div>
+        </div>
+        <div class="mic-orb">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 15C13.6569 15 15 13.6569 15 12V6C15 4.34315 13.6569 3 12 3C10.3431 3 9 4.34315 9 6V12C9 13.6569 10.3431 15 12 15Z" stroke="#fff" stroke-width="1.7"/><path d="M19 11V12C19 15.866 15.866 19 12 19M5 11V12C5 15.866 8.13401 19 12 19M12 19V22" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+      <div class="speak-desc">Record real phrases in Tamil and get instant pronunciation feedback.</div>
+    </button>
+
+    <div class="section-heading"><h3>Practice with AI</h3></div>
+    <div class="ai-card" data-goto="chat">
+      <div class="ai-avatar"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 10H8.01M12 10H12.01M16 10H16.01M21 12C21 16.4183 16.9706 20 12 20C10.4607 20 9.01172 19.6565 7.74467 19.0511L3 20L4.39499 16.28C3.51156 15.0423 3 13.5743 3 12C3 7.58172 7.02944 4 12 4C16.9706 4 21 7.58172 21 12Z" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="ai-copy"><h4>Chat with Nima</h4><p>Practice real conversations at your own pace</p></div>
+      <div class="ai-chevron"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+
+    <div class="section-heading"><h3>Build your foundation</h3></div>
+    <div class="grid-2">
+      <button class="learn-card vocab" data-goto="words" data-tab="vocab">
+        <div class="learn-card-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 19.5V6C4 4.89543 4.89543 4 6 4H19C19.5523 4 20 4.44772 20 5V17C20 17.5523 19.5523 18 19 18H6.5C5.11929 18 4 19.1193 4 20.5V19.5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+        <div><h4>Vocabulary</h4><p id="vocabCountHome">24 words · 4 sets</p></div>
+      </button>
+      <button class="learn-card grammar" data-goto="words" data-tab="grammar">
+        <div class="learn-card-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6H16M4 12H20M4 18H12" stroke="white" stroke-width="1.7" stroke-linecap="round"/></svg></div>
+        <div><h4>Grammar</h4><p>6 lessons</p></div>
       </button>
     </div>
-  </div>
 
-  <div class="progress-hero">
-    <div class="ring-wrap">
-      <svg viewBox="0 0 96 96">
-        <circle class="ring-track" cx="48" cy="48" r="40"/>
-        <circle class="ring-value" id="ringValue" cx="48" cy="48" r="40" stroke="url(#ringGrad)" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
-        <defs>
-          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#6C4CF1"/>
-            <stop offset="100%" stop-color="#3E7BFA"/>
-          </linearGradient>
-        </defs>
-      </svg>
-      <div class="ring-center">
-        <div class="ring-pct" id="ringPct">0%</div>
-        <div class="ring-sub">Level 3</div>
+    <div class="section-heading"><h3>Your progress</h3></div>
+    <div class="dashboard">
+      <div class="dash-row">
+        <div class="dash-stat"><div class="num" id="statLessons">0</div><div class="lbl">Lessons</div></div>
+        <div class="dash-stat"><div class="num" id="statAccuracy">0%</div><div class="lbl">Accuracy</div></div>
+        <div class="dash-stat"><div class="num" id="statMinutes">0</div><div class="lbl">Minutes</div></div>
       </div>
+      <div class="bars" id="barsWrap"></div>
     </div>
-    <div class="hero-copy">
-      <h2>Today's goal</h2>
-      <p>15 minutes of practice keeps your streak alive and locks in new words.</p>
-      <div class="hero-stats">
-        <div class="hero-stat"><b id="wordsLearned">0</b>words</div>
-        <div class="hero-stat"><b id="minutesToday">0</b>min today</div>
-      </div>
-    </div>
-  </div>
+    <div class="spacer-40"></div>
+  </section>
 
-  <button class="speak-card" id="speakBtn">
-    <div class="speak-top">
-      <div>
-        <div class="speak-label">SPEAKING PRACTICE</div>
-        <div class="speak-title">Talk it out loud</div>
-      </div>
-      <div class="mic-orb">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 15C13.6569 15 15 13.6569 15 12V6C15 4.34315 13.6569 3 12 3C10.3431 3 9 4.34315 9 6V12C9 13.6569 10.3431 15 12 15Z" stroke="#fff" stroke-width="1.7"/><path d="M19 11V12C19 15.866 15.866 19 12 19M5 11V12C5 15.866 8.13401 19 12 19M12 19V22" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg>
-      </div>
+  <!-- ============ WORDS (Vocabulary + Grammar) ============ -->
+  <section class="screen" data-screen="words">
+    <div class="page-header"><h2>Words</h2></div>
+    <div class="page-sub">Tap a card to flip it, then mark it known.</div>
+    <div class="tabs">
+      <button class="tab active" data-tab-btn="vocab">Vocabulary</button>
+      <button class="tab" data-tab-btn="grammar">Grammar</button>
     </div>
-    <div class="speak-desc">Get instant feedback on pronunciation with a 2-minute guided prompt.</div>
-  </button>
 
-  <div class="section-heading">
-    <h3>Practice with AI</h3>
-  </div>
-  <div class="ai-card" id="aiCard">
-    <div class="ai-avatar">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 10H8.01M12 10H12.01M16 10H16.01M21 12C21 16.4183 16.9706 20 12 20C10.4607 20 9.01172 19.6565 7.74467 19.0511L3 20L4.39499 16.28C3.51156 15.0423 3 13.5743 3 12C3 7.58172 7.02944 4 12 4C16.9706 4 21 7.58172 21 12Z" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="tab-panel active" data-tab-panel="vocab">
+      <div class="flash-grid" id="flashGrid"></div>
+      <div class="flash-hint">Tap a card to reveal the Tamil word · tap the dot to mark known</div>
     </div>
-    <div class="ai-copy">
-      <h4>Chat with Nima</h4>
-      <p>Practice real conversations at your own pace</p>
-    </div>
-    <div class="ai-chevron">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </div>
-  </div>
 
-  <div class="section-heading">
-    <h3>Build your foundation</h3>
-  </div>
-  <div class="grid-2">
-    <button class="learn-card vocab" id="vocabCard">
-      <div class="learn-card-icon">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 19.5V6C4 4.89543 4.89543 4 6 4H19C19.5523 4 20 4.44772 20 5V17C20 17.5523 19.5523 18 19 18H6.5C5.11929 18 4 19.1193 4 20.5V19.5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/></svg>
-      </div>
-      <div>
-        <h4>Vocabulary</h4>
-        <p id="vocabCount">120 words · 4 sets</p>
-      </div>
-    </button>
-    <button class="learn-card grammar" id="grammarCard">
-      <div class="learn-card-icon">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6H16M4 12H20M4 18H12" stroke="white" stroke-width="1.7" stroke-linecap="round"/></svg>
-      </div>
-      <div>
-        <h4>Grammar</h4>
-        <p id="grammarCount">18 lessons</p>
-      </div>
-    </button>
-  </div>
-
-  <div class="section-heading">
-    <h3>Your progress</h3>
-  </div>
-  <div class="dashboard">
-    <div class="dash-row">
-      <div class="dash-stat"><div class="num" id="statLessons">0</div><div class="lbl">Lessons</div></div>
-      <div class="dash-stat"><div class="num" id="statAccuracy">0%</div><div class="lbl">Accuracy</div></div>
-      <div class="dash-stat"><div class="num" id="statMinutes">0</div><div class="lbl">Minutes</div></div>
+    <div class="tab-panel" data-tab-panel="grammar">
+      <div class="accordion" id="grammarAccordion"></div>
     </div>
-    <div class="bars" id="barsWrap"></div>
-  </div>
+  </section>
 
-  <div class="spacer-40"></div>
+  <!-- ============ SPEAK ============ -->
+  <section class="screen" data-screen="speak">
+    <div class="page-header"><h2>Speaking practice</h2></div>
+    <div class="page-sub">Press the mic, say the phrase in Tamil, and get feedback.</div>
+    <div class="speak-support-note" id="speakSupportNote" style="display:none;"></div>
+    <div class="phrase-list" id="phraseList"></div>
+    <div class="spacer-40"></div>
+  </section>
+
+  <!-- ============ CHAT ============ -->
+  <section class="screen" data-screen="chat">
+    <div class="page-header"><h2>Chat with Nima</h2></div>
+    <div class="page-sub">Your AI conversation partner — reply in English or Tamil.</div>
+    <div class="chat-wrap">
+      <div class="chat-messages" id="chatMessages"></div>
+    </div>
+    <div class="chat-input-row">
+      <input class="chat-input" id="chatInput" type="text" placeholder="Type a message…" autocomplete="off">
+      <button class="chat-send" id="chatSend" aria-label="Send">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12L20 4L14 20L11 13L4 12Z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ PROFILE ============ -->
+  <section class="screen" data-screen="profile">
+    <div class="page-header"><h2>Profile</h2></div>
+    <div class="page-sub">Your account and app settings.</div>
+    <div class="profile-card">
+      <div><div class="label">Dark mode</div><div class="sub">Switch the app appearance</div></div>
+      <button class="switch" id="darkSwitch"></button>
+    </div>
+    <div class="profile-card">
+      <div><div class="label">Daily reminder</div><div class="sub">Nudge me to practice each evening</div></div>
+      <button class="switch on" id="reminderSwitch"></button>
+    </div>
+    <div class="profile-card">
+      <div><div class="label">Current streak</div><div class="sub" id="profileStreakSub">0 days in a row</div></div>
+      <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:20px;" id="profileStreakNum">0</div>
+    </div>
+    <button class="danger-btn" id="resetBtn">Reset all progress</button>
+  </section>
 
   <div class="bottom-nav">
-    <button class="nav-item active" data-nav>
+    <button class="nav-item active" data-nav="home">
       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10.5L12 3L21 10.5V20C21 20.5523 20.5523 21 20 21H15V14H9V21H4C3.44772 21 3 20.5523 3 20V10.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
       Home
     </button>
-    <button class="nav-item" data-nav>
+    <button class="nav-item" data-nav="words">
       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 19.5V6C4 4.89543 4.89543 4 6 4H19C19.5523 4 20 4.44772 20 5V17C20 17.5523 19.5523 18 19 18H6.5C5.11929 18 4 19.1193 4 20.5V19.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
       Words
     </button>
-    <button class="nav-item" data-nav>
+    <button class="nav-item" data-nav="speak">
       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 15C13.6569 15 15 13.6569 15 12V6C15 4.34315 13.6569 3 12 3C10.3431 3 9 4.34315 9 6V12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="1.6"/><path d="M19 11V12C19 15.866 15.866 19 12 19M5 11V12C5 15.866 8.13401 19 12 19M12 19V22" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
       Speak
     </button>
-    <button class="nav-item" data-nav>
+    <button class="nav-item" data-nav="chat">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 10H8.01M12 10H12.01M16 10H16.01M21 12C21 16.4183 16.9706 20 12 20C10.4607 20 9.01172 19.6565 7.74467 19.0511L3 20L4.39499 16.28C3.51156 15.0423 3 13.5743 3 12C3 7.58172 7.02944 4 12 4C16.9706 4 21 7.58172 21 12Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Chat
+    </button>
+    <button class="nav-item" data-nav="profile">
       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M5 20C5 16.6863 8.13401 14 12 14C15.866 14 19 16.6863 19 20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
       Profile
     </button>
@@ -559,47 +533,95 @@
 
 <script>
 (function () {
-  const STORAGE_KEY = 'lingoloop_state_v1';
+  const STORAGE_KEY = 'lingoloop_state_v2';
   const today = new Date().toISOString().slice(0, 10);
 
+  /* ---------------- Content data ---------------- */
+  const VOCAB = [
+    { en: 'Hello', ta: 'வணக்கம்', translit: 'Vanakkam' },
+    { en: 'Thank you', ta: 'நன்றி', translit: 'Nandri' },
+    { en: 'Please', ta: 'தயவுசெய்து', translit: 'Dayavu seydhu' },
+    { en: 'Yes', ta: 'ஆம்', translit: 'Aam' },
+    { en: 'No', ta: 'இல்லை', translit: 'Illai' },
+    { en: 'Water', ta: 'தண்ணீர்', translit: 'Thanneer' },
+    { en: 'Food', ta: 'சாப்பாடு', translit: 'Saapadu' },
+    { en: 'Friend', ta: 'நண்பன்', translit: 'Nanban' },
+    { en: 'Good morning', ta: 'காலை வணக்கம்', translit: 'Kaalai vanakkam' },
+    { en: 'How are you?', ta: 'எப்படி இருக்கீங்க?', translit: 'Eppadi irukeenga?' },
+    { en: 'My name is', ta: 'என் பெயர்', translit: 'En peyar' },
+    { en: 'Goodbye', ta: 'போய்ட்டு வாரேன்', translit: 'Poittu varen' }
+  ];
+
+  const GRAMMAR = [
+    {
+      title: 'Word order: Subject – Object – Verb',
+      body: 'Tamil sentences usually end with the verb, unlike English which ends with the object.',
+      ex: { ta: 'நான் சாதம் சாப்பிடுறேன்', en: 'I rice eat → "I eat rice"' }
+    },
+    {
+      title: 'No separate word for "the" or "a"',
+      body: 'Tamil has no articles. Context tells you whether a noun is specific or general.',
+      ex: { ta: 'புத்தகம் மேஜை மேல் இருக்கு', en: 'Book table-on is → "The book is on the table"' }
+    },
+    {
+      title: 'Verbs change for politeness',
+      body: 'Add "-ங்க" (-nga) to a verb to make it polite, used with elders or strangers.',
+      ex: { ta: 'வாங்க', en: '"Vaanga" — Come (polite) vs "Vaa" — Come (casual)' }
+    },
+    {
+      title: 'Postpositions instead of prepositions',
+      body: 'Words like "on", "in", "under" come after the noun in Tamil, not before it.',
+      ex: { ta: 'வீட்டு உள்ளே', en: 'House inside → "inside the house"' }
+    },
+    {
+      title: 'Questions end with "-ஆ" (-aa)',
+      body: 'Turn a statement into a yes/no question by adding "-aa" to the last word.',
+      ex: { ta: 'சாப்பிட்டீங்களா?', en: '"Did you eat?"' }
+    },
+    {
+      title: 'Pronouns show respect',
+      body: '"Nee" is casual "you"; "Neenga" is the respectful form used with elders.',
+      ex: { ta: 'நீங்க எப்படி இருக்கீங்க?', en: '"Neenga eppadi irukeenga?" — How are you (respectful)' }
+    }
+  ];
+
+  const PHRASES = [
+    { ta: 'வணக்கம்', translit: 'Vanakkam', en: 'Hello' },
+    { ta: 'நன்றி', translit: 'Nandri', en: 'Thank you' },
+    { ta: 'எப்படி இருக்கீங்க?', translit: 'Eppadi irukeenga?', en: 'How are you?' },
+    { ta: 'என் பெயர் ஆஷா', translit: 'En peyar Asha', en: 'My name is Asha' }
+  ];
+
+  /* ---------------- State ---------------- */
   function defaultState() {
     return {
       theme: 'light',
       streak: 6,
       lastActiveDate: null,
-      wordsLearned: 84,
       minutesToday: 0,
       lessons: 32,
       accuracy: 91,
       totalMinutes: 410,
-      weeklyMinutes: [12, 18, 9, 20, 15, 0, 0] // Mon..Sun, last two = today progress placeholder
+      weeklyMinutes: [12, 18, 9, 20, 15, 0, 0],
+      knownWords: {},
+      reminder: true
     };
   }
-
   function loadState() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return defaultState();
-      const parsed = JSON.parse(raw);
-      return Object.assign(defaultState(), parsed);
-    } catch (e) {
-      return defaultState();
-    }
+      return Object.assign(defaultState(), JSON.parse(raw));
+    } catch (e) { return defaultState(); }
   }
-
   function saveState() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch (e) { /* storage unavailable, continue silently */ }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
   }
-
   let state = loadState();
 
-  // Streak logic: bump once per new day the app is opened, reset minutesToday on new day
   if (state.lastActiveDate !== today) {
     if (state.lastActiveDate) {
-      const prev = new Date(state.lastActiveDate);
-      const diffDays = Math.round((new Date(today) - prev) / 86400000);
+      const diffDays = Math.round((new Date(today) - new Date(state.lastActiveDate)) / 86400000);
       if (diffDays === 1) state.streak += 1;
       else if (diffDays > 1) state.streak = 1;
     }
@@ -608,54 +630,302 @@
     saveState();
   }
 
-  const root = document.documentElement;
-  const themeToggle = document.getElementById('themeToggle');
-  const themeIcon = document.getElementById('themeIcon');
+  function wordsLearnedCount() { return Object.keys(state.knownWords).filter(k => state.knownWords[k]).length; }
 
+  /* ---------------- Theme ---------------- */
+  const root = document.documentElement;
   function applyTheme(theme) {
     root.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
+    const themeIcon = document.getElementById('themeIcon');
     themeIcon.innerHTML = theme === 'dark'
       ? '<path d="M21 12.8C20.3 13.1 19.5 13.3 18.7 13.3C15.1 13.3 12.2 10.4 12.2 6.8C12.2 6 12.4 5.2 12.7 4.5C8.9 5.1 6 8.4 6 12.4C6 16.8 9.6 20.4 14 20.4C17.5 20.4 20.5 18.1 21.5 14.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'
       : '<path d="M12 3V4.5M12 19.5V21M4.5 12H3M6.3 6.3L5.3 5.3M17.7 6.3L18.7 5.3M6.3 17.7L5.3 18.7M17.7 17.7L18.7 18.7M21 12H19.5M16.5 12C16.5 14.4853 14.4853 16.5 12 16.5C9.51472 16.5 7.5 14.4853 7.5 12C7.5 9.51472 9.51472 7.5 12 7.5C14.4853 7.5 16.5 9.51472 16.5 12Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>';
+    document.getElementById('darkSwitch').classList.toggle('on', theme === 'dark');
   }
-
   applyTheme(state.theme);
-
-  themeToggle.addEventListener('click', function () {
+  document.getElementById('themeToggle').addEventListener('click', function () {
     state.theme = state.theme === 'dark' ? 'light' : 'dark';
-    applyTheme(state.theme);
+    applyTheme(state.theme); saveState();
+  });
+  document.getElementById('darkSwitch').addEventListener('click', function () {
+    state.theme = state.theme === 'dark' ? 'light' : 'dark';
+    applyTheme(state.theme); saveState();
+  });
+  document.getElementById('reminderSwitch').addEventListener('click', function () {
+    state.reminder = !state.reminder;
+    this.classList.toggle('on', state.reminder);
     saveState();
+    showToast(state.reminder ? 'Daily reminder on' : 'Daily reminder off');
   });
 
+  /* ---------------- Toast ---------------- */
   function showToast(msg) {
     const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
+    t.textContent = msg; t.classList.add('show');
     clearTimeout(showToast._timer);
     showToast._timer = setTimeout(function () { t.classList.remove('show'); }, 1800);
   }
 
-  function render() {
+  /* ---------------- Navigation ---------------- */
+  function goto(screen, tab) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.toggle('active', s.dataset.screen === screen));
+    document.querySelectorAll('[data-nav]').forEach(b => b.classList.toggle('active', b.dataset.nav === screen));
+    if (screen === 'words' && tab) setTab(tab);
+    if (screen === 'chat') setTimeout(() => document.getElementById('chatInput').focus(), 200);
+  }
+  document.querySelectorAll('[data-nav]').forEach(btn => {
+    btn.addEventListener('click', () => goto(btn.dataset.nav));
+  });
+  document.querySelectorAll('[data-goto]').forEach(el => {
+    el.addEventListener('click', () => goto(el.dataset.goto, el.dataset.tab));
+  });
+
+  /* ---------------- Words: tabs ---------------- */
+  function setTab(tab) {
+    document.querySelectorAll('[data-tab-btn]').forEach(b => b.classList.toggle('active', b.dataset.tabBtn === tab));
+    document.querySelectorAll('[data-tab-panel]').forEach(p => p.classList.toggle('active', p.dataset.tabPanel === tab));
+  }
+  document.querySelectorAll('[data-tab-btn]').forEach(btn => {
+    btn.addEventListener('click', () => setTab(btn.dataset.tabBtn));
+  });
+
+  /* ---------------- Flashcards ---------------- */
+  function renderFlashcards() {
+    const grid = document.getElementById('flashGrid');
+    grid.innerHTML = '';
+    VOCAB.forEach((w, i) => {
+      const known = !!state.knownWords[i];
+      const card = document.createElement('div');
+      card.className = 'flashcard' + (known ? ' known' : '');
+      card.innerHTML =
+        '<div class="known-dot" data-know="' + i + '"></div>' +
+        '<div class="front">' + w.en + '</div>' +
+        '<div class="back tamil">' + w.ta + '<div class="translit">' + w.translit + '</div></div>';
+      card.addEventListener('click', function (e) {
+        if (e.target.dataset.know !== undefined && e.target.dataset.know !== '') return;
+        card.classList.toggle('flipped');
+      });
+      grid.appendChild(card);
+    });
+    grid.querySelectorAll('[data-know]').forEach(dot => {
+      dot.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const i = this.dataset.know;
+        state.knownWords[i] = !state.knownWords[i];
+        saveState();
+        renderFlashcards();
+        renderHome();
+      });
+    });
+  }
+
+  /* ---------------- Grammar accordion ---------------- */
+  function renderGrammar() {
+    const wrap = document.getElementById('grammarAccordion');
+    wrap.innerHTML = '';
+    GRAMMAR.forEach((g, i) => {
+      const item = document.createElement('div');
+      item.className = 'accordion-item';
+      item.innerHTML =
+        '<button class="accordion-header">' +
+          '<div class="accordion-num">' + (i + 1) + '</div>' +
+          '<div class="accordion-title">' + g.title + '</div>' +
+          '<div class="accordion-chevron"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>' +
+        '</button>' +
+        '<div class="accordion-body">' + g.body +
+          '<div class="accordion-example"><div class="ex-ta tamil">' + g.ex.ta + '</div><div class="ex-en">' + g.ex.en + '</div></div>' +
+        '</div>';
+      item.querySelector('.accordion-header').addEventListener('click', function () {
+        item.classList.toggle('open');
+      });
+      wrap.appendChild(item);
+    });
+  }
+
+  /* ---------------- Speaking practice ---------------- */
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  function normalize(s) { return (s || '').toLowerCase().replace(/[^a-z0-9\u0B80-\u0BFF ]/g, '').trim(); }
+
+  function renderPhrases() {
+    const note = document.getElementById('speakSupportNote');
+    if (!SR) {
+      note.style.display = 'block';
+      note.textContent = 'Speech recognition isn\'t supported in this browser. Try Chrome on Android or desktop to record your voice.';
+    }
+    const list = document.getElementById('phraseList');
+    list.innerHTML = '';
+    PHRASES.forEach((p, i) => {
+      const card = document.createElement('div');
+      card.className = 'phrase-card';
+      card.innerHTML =
+        '<div class="phrase-target tamil">' + p.ta + '</div>' +
+        '<div class="phrase-translit">' + p.translit + '</div>' +
+        '<div class="phrase-en">' + p.en + '</div>' +
+        '<div class="phrase-controls">' +
+          '<button class="rec-btn" data-rec="' + i + '"><svg viewBox="0 0 24 24" fill="none"><path d="M12 15C13.6569 15 15 13.6569 15 12V6C15 4.34315 13.6569 3 12 3C10.3431 3 9 4.34315 9 6V12C9 13.6569 10.3431 15 12 15Z" stroke="#fff" stroke-width="1.7"/><path d="M19 11V12C19 15.866 15.866 19 12 19M5 11V12C5 15.866 8.13401 19 12 19M12 19V22" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg></button>' +
+          '<div class="phrase-feedback" id="feedback-' + i + '">' + (SR ? 'Tap the mic and speak' : 'Mic unavailable') + '</div>' +
+        '</div>' +
+        '<div class="transcript-box" id="transcript-' + i + '" style="display:none;"></div>';
+      list.appendChild(card);
+    });
+
+    list.querySelectorAll('[data-rec]').forEach(btn => {
+      btn.addEventListener('click', function () { startRecognition(parseInt(this.dataset.rec), this); });
+    });
+  }
+
+  function startRecognition(i, btn) {
+    if (!SR) { showToast('Speech recognition not supported here'); return; }
+    const feedback = document.getElementById('feedback-' + i);
+    const transcriptBox = document.getElementById('transcript-' + i);
+    const recognition = new SR();
+    recognition.lang = 'ta-IN';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    btn.classList.add('recording');
+    feedback.className = 'phrase-feedback';
+    feedback.textContent = 'Listening…';
+    transcriptBox.style.display = 'none';
+
+    recognition.onresult = function (event) {
+      const said = event.results[0][0].transcript;
+      transcriptBox.style.display = 'block';
+      transcriptBox.textContent = 'You said: “' + said + '”';
+      const target = normalize(PHRASES[i].ta);
+      const heard = normalize(said);
+      const isMatch = heard.length > 0 && (target.includes(heard) || heard.includes(target) || heard === target);
+      if (isMatch) {
+        feedback.className = 'phrase-feedback good';
+        feedback.textContent = 'Great pronunciation! ✓';
+        state.minutesToday += 1; state.totalMinutes += 1;
+        saveState(); renderHome();
+      } else {
+        feedback.className = 'phrase-feedback bad';
+        feedback.textContent = 'Close — try again';
+      }
+    };
+    recognition.onerror = function (event) {
+      feedback.className = 'phrase-feedback bad';
+      feedback.textContent = event.error === 'not-allowed' ? 'Microphone permission denied' : 'Couldn\'t hear that — try again';
+    };
+    recognition.onend = function () { btn.classList.remove('recording'); };
+    try { recognition.start(); } catch (e) { btn.classList.remove('recording'); }
+  }
+
+  /* ---------------- AI Chat ---------------- */
+  let chatHistory = [];
+  let claudeSample = null;
+
+  async function initSample() {
+    try {
+      claudeSample = await claude.use('sample');
+    } catch (e) { claudeSample = null; }
+  }
+  if (window.claude && typeof claude.use === 'function') { initSample(); }
+
+  function addMsg(role, text) {
+    const wrap = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = 'msg ' + (role === 'user' ? 'user' : 'ai');
+    div.textContent = text;
+    wrap.appendChild(div);
+    wrap.scrollTop = wrap.scrollHeight;
+  }
+
+  function addTyping() {
+    const wrap = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = 'msg ai typing';
+    div.id = 'typingIndicator';
+    div.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+    wrap.appendChild(div);
+    wrap.scrollTop = wrap.scrollHeight;
+  }
+  function removeTyping() {
+    const t = document.getElementById('typingIndicator');
+    if (t) t.remove();
+  }
+
+  function seedChat() {
+    document.getElementById('chatMessages').innerHTML = '';
+    chatHistory = [];
+    addMsg('ai', 'Vanakkam! Naan Nima — your Tamil conversation partner. Ask me anything, or reply to my questions in English or Tamil!');
+  }
+
+  async function sendChat() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    addMsg('user', text);
+    chatHistory.push({ role: 'user', content: text });
+
+    if (!claudeSample) {
+      await new Promise(r => setTimeout(r, 400));
+      addMsg('ai', 'Nandri! (AI replies need this page opened inside claude.ai to reach Claude — but keep typing, I\'m listening!)');
+      return;
+    }
+
+    addTyping();
+    try {
+      const result = await claudeSample(
+        [
+          { role: 'user', content: 'You are Nima, a warm, encouraging Tamil-language conversation partner for an English-speaking learner named Asha. Keep replies short (1-3 sentences), mix simple Tamil phrases with English translations in parentheses, and gently correct mistakes. Conversation so far:\n' +
+            chatHistory.map(m => (m.role === 'user' ? 'Asha: ' : 'Nima: ') + m.content).join('\n') +
+            '\nReply as Nima to Asha\'s latest message.' }
+        ],
+        { modelTier: 'quick' }
+      );
+      removeTyping();
+      const reply = (result && result.text) ? result.text.trim() : 'Sorry, I lost my train of thought — try again?';
+      addMsg('ai', reply);
+      chatHistory.push({ role: 'assistant', content: reply });
+    } catch (e) {
+      removeTyping();
+      addMsg('ai', 'Hmm, I couldn\'t respond just now. Try again in a moment.');
+    }
+  }
+
+  document.getElementById('chatSend').addEventListener('click', sendChat);
+  document.getElementById('chatInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') sendChat();
+  });
+
+  /* ---------------- Profile ---------------- */
+  document.getElementById('resetBtn').addEventListener('click', function () {
+    if (confirm('Reset all progress? This cannot be undone.')) {
+      state = defaultState();
+      state.lastActiveDate = today;
+      saveState();
+      renderHome();
+      renderFlashcards();
+      showToast('Progress reset');
+    }
+  });
+
+  /* ---------------- Home render ---------------- */
+  function renderHome() {
     document.getElementById('streakCount').textContent = state.streak;
-    document.getElementById('wordsLearned').textContent = state.wordsLearned;
+    document.getElementById('profileStreakNum').textContent = state.streak;
+    document.getElementById('profileStreakSub').textContent = state.streak + ' days in a row';
+    document.getElementById('wordsLearned').textContent = wordsLearnedCount();
+    document.getElementById('vocabCountHome').textContent = wordsLearnedCount() + ' / ' + VOCAB.length + ' words known';
     document.getElementById('minutesToday').textContent = state.minutesToday;
     document.getElementById('statLessons').textContent = state.lessons;
     document.getElementById('statAccuracy').textContent = state.accuracy + '%';
     document.getElementById('statMinutes').textContent = state.totalMinutes;
 
     const hour = new Date().getHours();
-    document.getElementById('greetingLabel').textContent =
-      hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+    document.getElementById('greetingLabel').textContent = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
 
-    const pct = Math.min(100, Math.round((state.wordsLearned / 150) * 100));
+    const pct = Math.min(100, Math.round((wordsLearnedCount() / VOCAB.length) * 100));
     const circumference = 251.2;
-    const offset = circumference - (pct / 100) * circumference;
-    document.getElementById('ringValue').style.strokeDashoffset = offset;
+    document.getElementById('ringValue').style.strokeDashoffset = circumference - (pct / 100) * circumference;
     document.getElementById('ringPct').textContent = pct + '%';
 
     renderBars();
   }
-
   function renderBars() {
     const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
     const data = state.weeklyMinutes.slice(0, 6).concat([state.minutesToday]);
@@ -667,42 +937,18 @@
       const col = document.createElement('div');
       col.className = 'bar-col' + (isToday ? ' today' : '');
       const barHeight = Math.max(6, Math.round((val / max) * 54));
-      col.innerHTML =
-        '<div class="bar"><div class="bar-fill" style="height:' + barHeight + 'px"></div></div>' +
-        '<div class="bar-day">' + days[i] + '</div>';
+      col.innerHTML = '<div class="bar"><div class="bar-fill" style="height:' + barHeight + 'px"></div></div><div class="bar-day">' + days[i] + '</div>';
       wrap.appendChild(col);
     });
   }
 
-  document.getElementById('speakBtn').addEventListener('click', function () {
-    state.minutesToday += 2;
-    state.totalMinutes += 2;
-    state.wordsLearned = Math.min(150, state.wordsLearned + 1);
-    saveState();
-    render();
-    showToast('Nice! +2 min logged');
-  });
-
-  document.getElementById('aiCard').addEventListener('click', function () {
-    showToast('Opening conversation practice…');
-  });
-
-  document.getElementById('vocabCard').addEventListener('click', function () {
-    showToast('Opening vocabulary sets…');
-  });
-
-  document.getElementById('grammarCard').addEventListener('click', function () {
-    showToast('Opening grammar lessons…');
-  });
-
-  document.querySelectorAll('[data-nav]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      document.querySelectorAll('[data-nav]').forEach(function (b) { b.classList.remove('active'); });
-      btn.classList.add('active');
-    });
-  });
-
-  render();
+  /* ---------------- Init ---------------- */
+  renderHome();
+  renderFlashcards();
+  renderGrammar();
+  renderPhrases();
+  seedChat();
+  document.getElementById('reminderSwitch').classList.toggle('on', state.reminder);
 })();
 </script>
 </body>
