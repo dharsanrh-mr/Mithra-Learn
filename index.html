@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>LingoLoop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F3F1FB;
+    --bg-elevated: #FFFFFF;
+    --surface: #FFFFFF;
+    --surface-2: #F7F5FC;
+    --ink: #1D1633;
+    --ink-soft: #6B6480;
+    --ink-faint: #9C96AE;
+    --line: #E7E2F5;
+    --violet-1: #6C4CF1;
+    --violet-2: #9A6BFF;
+    --blue-1: #3E7BFA;
+    --teal-1: #16BFA6;
+    --teal-2: #45E0C4;
+    --amber-1: #FF9F45;
+    --amber-2: #FFC66D;
+    --rose-1: #FF5D8F;
+    --rose-2: #FF8FB0;
+    --flame-1: #FF7A45;
+    --flame-2: #FFB648;
+    --shadow-soft: 0 10px 24px -12px rgba(43, 25, 92, 0.18);
+    --shadow-card: 0 14px 30px -16px rgba(43, 25, 92, 0.28);
+    --radius-lg: 26px;
+    --radius-md: 18px;
+    --radius-sm: 12px;
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #12101C;
+    --bg-elevated: #1B1830;
+    --surface: #1E1B33;
+    --surface-2: #262040;
+    --ink: #F1EEFB;
+    --ink-soft: #B7B0D2;
+    --ink-faint: #7C7596;
+    --line: #33304F;
+    --shadow-soft: 0 10px 24px -12px rgba(0, 0, 0, 0.5);
+    --shadow-card: 0 14px 34px -16px rgba(0, 0, 0, 0.6);
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, sans-serif;
+    height: 100%;
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  .device {
+    width: 100%;
+    max-width: 430px;
+    min-height: 100vh;
+    background: var(--bg);
+    position: relative;
+    padding-bottom: 92px;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .display {
+    font-family: 'Outfit', sans-serif;
+    margin: 0;
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 20px 6px;
+  }
+
+  .greeting-label {
+    font-size: 13px;
+    color: var(--ink-faint);
+    font-weight: 500;
+  }
+
+  .greeting-name {
+    font-family: 'Outfit', sans-serif;
+    font-size: 21px;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .icon-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-soft);
+    transition: transform .15s ease;
+  }
+  .icon-btn:active { transform: scale(0.92); }
+  .icon-btn svg { width: 19px; height: 19px; }
+
+  .streak-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, var(--flame-1), var(--flame-2));
+    padding: 8px 13px 8px 10px;
+    border-radius: 999px;
+    box-shadow: 0 8px 18px -8px rgba(255, 122, 69, 0.55);
+  }
+  .streak-pill svg { width: 16px; height: 16px; }
+  .streak-count {
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  /* ---------- Progress hero ---------- */
+  .progress-hero {
+    margin: 18px 20px 0;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: var(--shadow-card);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .progress-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(120px 120px at 100% 0%, rgba(108,76,241,0.10), transparent 70%);
+    pointer-events: none;
+  }
+
+  .ring-wrap { position: relative; width: 96px; height: 96px; flex-shrink: 0; }
+  .ring-wrap svg { transform: rotate(-90deg); width: 96px; height: 96px; }
+  .ring-track { fill: none; stroke: var(--surface-2); stroke-width: 9; }
+  .ring-value { fill: none; stroke-width: 9; stroke-linecap: round; transition: stroke-dashoffset .6s ease; }
+  .ring-center {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .ring-pct { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 19px; }
+  .ring-sub { font-size: 9px; color: var(--ink-faint); font-weight: 600; }
+
+  .hero-copy h2 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .hero-copy p { margin: 0; font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; }
+  .hero-stats { display: flex; gap: 14px; margin-top: 10px; }
+  .hero-stat { font-size: 11.5px; color: var(--ink-soft); }
+  .hero-stat b { color: var(--ink); font-family: 'Outfit', sans-serif; font-size: 13px; display: block; }
+
+  /* ---------- Speaking hero button ---------- */
+  .speak-card {
+    margin: 18px 20px 0;
+    border-radius: var(--radius-lg);
+    padding: 26px 22px;
+    background: linear-gradient(135deg, var(--violet-1), var(--blue-1) 70%);
+    box-shadow: 0 20px 34px -16px rgba(108, 76, 241, 0.55);
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    cursor: pointer;
+    border: none;
+    width: calc(100% - 40px);
+    text-align: left;
+    font-family: inherit;
+  }
+  .speak-card::after {
+    content: "";
+    position: absolute;
+    width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(255,255,255,0.16), transparent 65%);
+    top: -80px; right: -60px;
+    border-radius: 50%;
+  }
+  .speak-top { display: flex; align-items: center; justify-content: space-between; }
+  .speak-label { font-size: 12px; letter-spacing: 0.02em; opacity: 0.85; font-weight: 600; }
+  .speak-title { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 700; margin-top: 6px; }
+  .speak-desc { font-size: 12.5px; opacity: 0.88; margin-top: 6px; max-width: 220px; line-height: 1.5; }
+
+  .mic-orb {
+    width: 62px; height: 62px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.35);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .mic-orb svg { width: 26px; height: 26px; }
+  .mic-orb::before {
+    content: "";
+    position: absolute; inset: -8px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.35);
+    animation: pulse-ring 2.4s ease-out infinite;
+  }
+  @keyframes pulse-ring {
+    0% { transform: scale(0.85); opacity: 0.9; }
+    100% { transform: scale(1.35); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mic-orb::before { animation: none; }
+  }
+
+  /* ---------- Section heading ---------- */
+  .section-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin: 26px 20px 12px;
+  }
+  .section-heading h3 { font-size: 15.5px; font-weight: 700; }
+  .section-heading a { font-size: 12px; color: var(--violet-1); font-weight: 600; text-decoration: none; }
+
+  /* ---------- AI conversation card ---------- */
+  .ai-card {
+    margin: 0 20px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: var(--shadow-soft);
+    cursor: pointer;
+  }
+  .ai-avatar {
+    width: 48px; height: 48px; border-radius: 14px;
+    background: linear-gradient(135deg, var(--teal-1), var(--teal-2));
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 8px 16px -8px rgba(22,191,166,0.5);
+  }
+  .ai-avatar svg { width: 22px; height: 22px; color: #fff; }
+  .ai-copy h4 { margin: 0 0 3px; font-size: 14px; font-weight: 700; font-family: 'Outfit', sans-serif; }
+  .ai-copy p { margin: 0; font-size: 12px; color: var(--ink-soft); }
+  .ai-chevron { margin-left: auto; color: var(--ink-faint); }
+  .ai-chevron svg { width: 16px; height: 16px; }
+
+  /* ---------- Learning cards grid ---------- */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 0 20px;
+  }
+
+  .learn-card {
+    border-radius: var(--radius-md);
+    padding: 18px 16px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    min-height: 128px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+    border: none;
+    text-align: left;
+    font-family: inherit;
+    box-shadow: var(--shadow-card);
+  }
+  .learn-card.vocab { background: linear-gradient(150deg, var(--amber-1), var(--amber-2)); }
+  .learn-card.grammar { background: linear-gradient(150deg, var(--rose-1), var(--rose-2)); }
+
+  .learn-card::after {
+    content: "";
+    position: absolute;
+    width: 110px; height: 110px;
+    background: radial-gradient(circle, rgba(255,255,255,0.22), transparent 70%);
+    bottom: -50px; right: -30px;
+    border-radius: 50%;
+  }
+  .learn-card-icon {
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.24);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .learn-card-icon svg { width: 17px; height: 17px; }
+  .learn-card h4 { font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; margin: 0 0 2px; }
+  .learn-card p { margin: 0; font-size: 11.5px; opacity: 0.9; }
+
+  /* ---------- Dashboard ---------- */
+  .dashboard {
+    margin: 0 20px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    box-shadow: var(--shadow-soft);
+  }
+  .dash-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .dash-stat {
+    background: var(--surface-2);
+    border-radius: var(--radius-sm);
+    padding: 12px 10px;
+    text-align: center;
+  }
+  .dash-stat .num { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 18px; }
+  .dash-stat .lbl { font-size: 10px; color: var(--ink-faint); margin-top: 2px; font-weight: 600; }
+
+  .bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 7px;
+    height: 74px;
+    padding: 0 2px;
+  }
+  .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .bar {
+    width: 100%;
+    border-radius: 7px 7px 3px 3px;
+    background: var(--surface-2);
+    position: relative;
+    height: 54px;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+  .bar-fill {
+    width: 100%;
+    border-radius: 7px 7px 3px 3px;
+    background: linear-gradient(180deg, var(--violet-2), var(--violet-1));
+  }
+  .bar-col.today .bar-fill { background: linear-gradient(180deg, var(--teal-2), var(--teal-1)); }
+  .bar-day { font-size: 9.5px; color: var(--ink-faint); font-weight: 600; }
+
+  /* ---------- Bottom nav ---------- */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 430px;
+    background: var(--bg-elevated);
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
+    box-shadow: 0 -8px 24px -16px rgba(43,25,92,0.25);
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--ink-faint);
+    background: none;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 10px;
+    border-radius: 12px;
+    transition: color .15s ease;
+  }
+  .nav-item svg { width: 21px; height: 21px; }
+  .nav-item.active { color: var(--violet-1); }
+
+  /* ---------- Toast ---------- */
+  .toast {
+    position: fixed;
+    bottom: 96px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 11px 18px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 600;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease, transform .25s ease;
+    z-index: 50;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .spacer-40 { height: 8px; }
+</style>
+</head>
+<body>
+<div class="device">
+
+  <div class="topbar">
+    <div>
+      <div class="greeting-label" id="greetingLabel">Good morning</div>
+      <div class="greeting-name">Keep it up, Asha</div>
+    </div>
+    <div class="topbar-actions">
+      <div class="streak-pill" id="streakPill" title="Daily streak">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C12 2 7 7.5 7 12.5C7 15.5 9 18 12 18C15 18 17 15.5 17 12.5C17 11 16.3 9.8 15.6 8.8C15.6 10 15 11 14 11.3C14.5 9 13.3 6.5 11.5 5.3C11.9 6.7 11.2 7.8 10.3 8.6C8.9 9.9 8 11.3 8 13" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="rgba(255,255,255,0.25)"/></svg>
+        <span class="streak-count" id="streakCount">0</span>
+      </div>
+      <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode">
+        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3V4.5M12 19.5V21M4.5 12H3M6.3 6.3L5.3 5.3M17.7 6.3L18.7 5.3M6.3 17.7L5.3 18.7M17.7 17.7L18.7 18.7M21 12H19.5M16.5 12C16.5 14.4853 14.4853 16.5 12 16.5C9.51472 16.5 7.5 14.4853 7.5 12C7.5 9.51472 9.51472 7.5 12 7.5C14.4853 7.5 16.5 9.51472 16.5 12Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="progress-hero">
+    <div class="ring-wrap">
+      <svg viewBox="0 0 96 96">
+        <circle class="ring-track" cx="48" cy="48" r="40"/>
+        <circle class="ring-value" id="ringValue" cx="48" cy="48" r="40" stroke="url(#ringGrad)" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
+        <defs>
+          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#6C4CF1"/>
+            <stop offset="100%" stop-color="#3E7BFA"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="ring-center">
+        <div class="ring-pct" id="ringPct">0%</div>
+        <div class="ring-sub">Level 3</div>
+      </div>
+    </div>
+    <div class="hero-copy">
+      <h2>Today's goal</h2>
+      <p>15 minutes of practice keeps your streak alive and locks in new words.</p>
+      <div class="hero-stats">
+        <div class="hero-stat"><b id="wordsLearned">0</b>words</div>
+        <div class="hero-stat"><b id="minutesToday">0</b>min today</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="speak-card" id="speakBtn">
+    <div class="speak-top">
+      <div>
+        <div class="speak-label">SPEAKING PRACTICE</div>
+        <div class="speak-title">Talk it out loud</div>
+      </div>
+      <div class="mic-orb">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 15C13.6569 15 15 13.6569 15 12V6C15 4.34315 13.6569 3 12 3C10.3431 3 9 4.34315 9 6V12C9 13.6569 10.3431 15 12 15Z" stroke="#fff" stroke-width="1.7"/><path d="M19 11V12C19 15.866 15.866 19 12 19M5 11V12C5 15.866 8.13401 19 12 19M12 19V22" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+    <div class="speak-desc">Get instant feedback on pronunciation with a 2-minute guided prompt.</div>
+  </button>
+
+  <div class="section-heading">
+    <h3>Practice with AI</h3>
+  </div>
+  <div class="ai-card" id="aiCard">
+    <div class="ai-avatar">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 10H8.01M12 10H12.01M16 10H16.01M21 12C21 16.4183 16.9706 20 12 20C10.4607 20 9.01172 19.6565 7.74467 19.0511L3 20L4.39499 16.28C3.51156 15.0423 3 13.5743 3 12C3 7.58172 7.02944 4 12 4C16.9706 4 21 7.58172 21 12Z" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="ai-copy">
+      <h4>Chat with Nima</h4>
+      <p>Practice real conversations at your own pace</p>
+    </div>
+    <div class="ai-chevron">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+  </div>
+
+  <div class="section-heading">
+    <h3>Build your foundation</h3>
+  </div>
+  <div class="grid-2">
+    <button class="learn-card vocab" id="vocabCard">
+      <div class="learn-card-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 19.5V6C4 4.89543 4.89543 4 6 4H19C19.5523 4 20 4.44772 20 5V17C20 17.5523 19.5523 18 19 18H6.5C5.11929 18 4 19.1193 4 20.5V19.5Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      </div>
+      <div>
+        <h4>Vocabulary</h4>
+        <p id="vocabCount">120 words · 4 sets</p>
+      </div>
+    </button>
+    <button class="learn-card grammar" id="grammarCard">
+      <div class="learn-card-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6H16M4 12H20M4 18H12" stroke="white" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <h4>Grammar</h4>
+        <p id="grammarCount">18 lessons</p>
+      </div>
+    </button>
+  </div>
+
+  <div class="section-heading">
+    <h3>Your progress</h3>
+  </div>
+  <div class="dashboard">
+    <div class="dash-row">
+      <div class="dash-stat"><div class="num" id="statLessons">0</div><div class="lbl">Lessons</div></div>
+      <div class="dash-stat"><div class="num" id="statAccuracy">0%</div><div class="lbl">Accuracy</div></div>
+      <div class="dash-stat"><div class="num" id="statMinutes">0</div><div class="lbl">Minutes</div></div>
+    </div>
+    <div class="bars" id="barsWrap"></div>
+  </div>
+
+  <div class="spacer-40"></div>
+
+  <div class="bottom-nav">
+    <button class="nav-item active" data-nav>
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10.5L12 3L21 10.5V20C21 20.5523 20.5523 21 20 21H15V14H9V21H4C3.44772 21 3 20.5523 3 20V10.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      Home
+    </button>
+    <button class="nav-item" data-nav>
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 19.5V6C4 4.89543 4.89543 4 6 4H19C19.5523 4 20 4.44772 20 5V17C20 17.5523 19.5523 18 19 18H6.5C5.11929 18 4 19.1193 4 20.5V19.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      Words
+    </button>
+    <button class="nav-item" data-nav>
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 15C13.6569 15 15 13.6569 15 12V6C15 4.34315 13.6569 3 12 3C10.3431 3 9 4.34315 9 6V12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="1.6"/><path d="M19 11V12C19 15.866 15.866 19 12 19M5 11V12C5 15.866 8.13401 19 12 19M12 19V22" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      Speak
+    </button>
+    <button class="nav-item" data-nav>
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.6"/><path d="M5 20C5 16.6863 8.13401 14 12 14C15.866 14 19 16.6863 19 20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      Profile
+    </button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+(function () {
+  const STORAGE_KEY = 'lingoloop_state_v1';
+  const today = new Date().toISOString().slice(0, 10);
+
+  function defaultState() {
+    return {
+      theme: 'light',
+      streak: 6,
+      lastActiveDate: null,
+      wordsLearned: 84,
+      minutesToday: 0,
+      lessons: 32,
+      accuracy: 91,
+      totalMinutes: 410,
+      weeklyMinutes: [12, 18, 9, 20, 15, 0, 0] // Mon..Sun, last two = today progress placeholder
+    };
+  }
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return defaultState();
+      const parsed = JSON.parse(raw);
+      return Object.assign(defaultState(), parsed);
+    } catch (e) {
+      return defaultState();
+    }
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) { /* storage unavailable, continue silently */ }
+  }
+
+  let state = loadState();
+
+  // Streak logic: bump once per new day the app is opened, reset minutesToday on new day
+  if (state.lastActiveDate !== today) {
+    if (state.lastActiveDate) {
+      const prev = new Date(state.lastActiveDate);
+      const diffDays = Math.round((new Date(today) - prev) / 86400000);
+      if (diffDays === 1) state.streak += 1;
+      else if (diffDays > 1) state.streak = 1;
+    }
+    state.lastActiveDate = today;
+    state.minutesToday = 0;
+    saveState();
+  }
+
+  const root = document.documentElement;
+  const themeToggle = document.getElementById('themeToggle');
+  const themeIcon = document.getElementById('themeIcon');
+
+  function applyTheme(theme) {
+    root.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
+    themeIcon.innerHTML = theme === 'dark'
+      ? '<path d="M21 12.8C20.3 13.1 19.5 13.3 18.7 13.3C15.1 13.3 12.2 10.4 12.2 6.8C12.2 6 12.4 5.2 12.7 4.5C8.9 5.1 6 8.4 6 12.4C6 16.8 9.6 20.4 14 20.4C17.5 20.4 20.5 18.1 21.5 14.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'
+      : '<path d="M12 3V4.5M12 19.5V21M4.5 12H3M6.3 6.3L5.3 5.3M17.7 6.3L18.7 5.3M6.3 17.7L5.3 18.7M17.7 17.7L18.7 18.7M21 12H19.5M16.5 12C16.5 14.4853 14.4853 16.5 12 16.5C9.51472 16.5 7.5 14.4853 7.5 12C7.5 9.51472 9.51472 7.5 12 7.5C14.4853 7.5 16.5 9.51472 16.5 12Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>';
+  }
+
+  applyTheme(state.theme);
+
+  themeToggle.addEventListener('click', function () {
+    state.theme = state.theme === 'dark' ? 'light' : 'dark';
+    applyTheme(state.theme);
+    saveState();
+  });
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(showToast._timer);
+    showToast._timer = setTimeout(function () { t.classList.remove('show'); }, 1800);
+  }
+
+  function render() {
+    document.getElementById('streakCount').textContent = state.streak;
+    document.getElementById('wordsLearned').textContent = state.wordsLearned;
+    document.getElementById('minutesToday').textContent = state.minutesToday;
+    document.getElementById('statLessons').textContent = state.lessons;
+    document.getElementById('statAccuracy').textContent = state.accuracy + '%';
+    document.getElementById('statMinutes').textContent = state.totalMinutes;
+
+    const hour = new Date().getHours();
+    document.getElementById('greetingLabel').textContent =
+      hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+
+    const pct = Math.min(100, Math.round((state.wordsLearned / 150) * 100));
+    const circumference = 251.2;
+    const offset = circumference - (pct / 100) * circumference;
+    document.getElementById('ringValue').style.strokeDashoffset = offset;
+    document.getElementById('ringPct').textContent = pct + '%';
+
+    renderBars();
+  }
+
+  function renderBars() {
+    const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    const data = state.weeklyMinutes.slice(0, 6).concat([state.minutesToday]);
+    const max = Math.max(20, ...data);
+    const wrap = document.getElementById('barsWrap');
+    wrap.innerHTML = '';
+    data.forEach(function (val, i) {
+      const isToday = i === data.length - 1;
+      const col = document.createElement('div');
+      col.className = 'bar-col' + (isToday ? ' today' : '');
+      const barHeight = Math.max(6, Math.round((val / max) * 54));
+      col.innerHTML =
+        '<div class="bar"><div class="bar-fill" style="height:' + barHeight + 'px"></div></div>' +
+        '<div class="bar-day">' + days[i] + '</div>';
+      wrap.appendChild(col);
+    });
+  }
+
+  document.getElementById('speakBtn').addEventListener('click', function () {
+    state.minutesToday += 2;
+    state.totalMinutes += 2;
+    state.wordsLearned = Math.min(150, state.wordsLearned + 1);
+    saveState();
+    render();
+    showToast('Nice! +2 min logged');
+  });
+
+  document.getElementById('aiCard').addEventListener('click', function () {
+    showToast('Opening conversation practice…');
+  });
+
+  document.getElementById('vocabCard').addEventListener('click', function () {
+    showToast('Opening vocabulary sets…');
+  });
+
+  document.getElementById('grammarCard').addEventListener('click', function () {
+    showToast('Opening grammar lessons…');
+  });
+
+  document.querySelectorAll('[data-nav]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('[data-nav]').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+    });
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
