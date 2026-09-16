@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#111827">
+<title>Mithra Learn — Language Learning</title>
+<style>
+:root{
+  --bg:#f6f7fb; --surface:#fff; --text:#111827; --muted:#6b7280;
+  --line:#e5e7eb; --dark:#111827; --accent:#7c3aed; --accent2:#ec4899;
+  --green:#10b981; --shadow:0 14px 35px rgba(17,24,39,.08);
+}
+[data-theme="dark"]{
+  --bg:#0b0f19; --surface:#151b28; --text:#f9fafb; --muted:#9ca3af;
+  --line:#273142; --dark:#f9fafb; --shadow:0 16px 38px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+button{font:inherit;border:0;cursor:pointer}
+.app{width:100%;max-width:520px;margin:auto;min-height:100vh;padding-bottom:88px}
+.top{padding:24px 18px 10px;display:flex;justify-content:space-between;align-items:center}
+.brand{font-size:20px;font-weight:850}.brand span{color:var(--accent)}
+.icon-btn{width:42px;height:42px;border-radius:14px;background:var(--surface);color:var(--text);box-shadow:var(--shadow);font-size:19px}
+.page{display:none;padding:8px 18px}.page.active{display:block}
+.hero{
+  padding:22px;border-radius:28px;color:white;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#7c3aed,#ec4899 58%,#f59e0b);
+  box-shadow:0 18px 40px rgba(124,58,237,.25)
+}
+.hero:after{content:"";position:absolute;width:170px;height:170px;border-radius:50%;right:-65px;top:-70px;background:rgba(255,255,255,.14)}
+.eyebrow{font-size:12px;opacity:.82;text-transform:uppercase;letter-spacing:1.2px;font-weight:700}
+.hero h1{font-size:27px;line-height:1.1;margin:8px 0 6px}.hero p{margin:0;opacity:.9;font-size:14px}
+.progress-wrap{display:flex;align-items:center;gap:18px;margin-top:20px}
+.circle{width:94px;height:94px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#fff calc(var(--progress)*1%),rgba(255,255,255,.22) 0);position:relative;flex:none}
+.circle:after{content:"";position:absolute;inset:9px;border-radius:50%;background:rgba(124,58,237,.9)}
+.circle b{position:relative;z-index:1;font-size:22px}.progress-text b{display:block;font-size:18px}.progress-text span{font-size:12px;opacity:.82}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin:22px 2px 12px}.section-head h2{font-size:17px;margin:0}.section-head span{font-size:12px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:17px;box-shadow:var(--shadow)}
+.card .emoji{font-size:25px}.card h3{margin:10px 0 5px;font-size:15px}.card p{margin:0;color:var(--muted);font-size:12px}
+.gradient-card{color:white;border:0;min-height:142px;background:linear-gradient(145deg,#111827,#374151)}
+.gradient-card.pink{background:linear-gradient(145deg,#db2777,#f97316)}
+.gradient-card.purple{background:linear-gradient(145deg,#6d28d9,#2563eb)}
+.streak{display:flex;align-items:center;justify-content:space-between}.streak strong{font-size:29px}.streak small{color:var(--muted)}
+.speak{width:100%;padding:19px;border-radius:22px;background:var(--dark);color:var(--surface);font-weight:800;font-size:17px;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;gap:10px}
+[data-theme="dark"] .speak{background:#f9fafb;color:#111827}
+.ai{display:flex;gap:14px;align-items:center}.ai-icon{width:52px;height:52px;border-radius:17px;display:grid;place-items:center;background:linear-gradient(135deg,#8b5cf6,#ec4899);font-size:25px;color:#fff}
+.list{display:grid;gap:10px}.row{display:flex;align-items:center;gap:12px;padding:13px;border:1px solid var(--line);border-radius:17px;background:var(--surface)}
+.row .mini{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:var(--bg);font-size:20px}.row b{font-size:14px}.row small{display:block;color:var(--muted);margin-top:3px}
+.action{margin-left:auto;background:var(--bg);color:var(--text);padding:9px 11px;border-radius:11px;font-size:12px;font-weight:700}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{text-align:center}.stat b{font-size:21px;display:block}.stat span{font-size:11px;color:var(--muted)}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:9px}.bar i{display:block;height:100%;background:linear-gradient(90deg,#7c3aed,#ec4899);border-radius:99px}
+.bottom{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:min(calc(100% - 24px),490px);background:var(--surface);border:1px solid var(--line);box-shadow:0 18px 45px rgba(0,0,0,.15);border-radius:24px;padding:9px;display:grid;grid-template-columns:repeat(5,1fr);z-index:20}
+.nav{background:transparent;color:var(--muted);padding:6px 2px;border-radius:16px;font-size:10px;font-weight:700}.nav b{display:block;font-size:19px;margin-bottom:3px}.nav.active{background:var(--bg);color:var(--text)}
+.chips{display:flex;gap:8px;overflow:auto;padding-bottom:3px}.chip{white-space:nowrap;padding:10px 14px;border-radius:99px;background:var(--surface);border:1px solid var(--line);color:var(--text);font-size:12px}.chip.on{background:var(--dark);color:var(--surface)}
+.practice-box{padding:22px;text-align:center}.practice-box .big{font-size:50px}.practice-box h2{margin:8px 0}.practice-box p{color:var(--muted);font-size:14px;line-height:1.5}
+.primary{background:linear-gradient(135deg,#7c3aed,#ec4899);color:white;padding:14px 18px;border-radius:16px;font-weight:800;width:100%;margin-top:10px}
+.back{background:transparent;color:var(--muted);padding:8px 0;font-size:13px}
+.setting{display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-bottom:1px solid var(--line)}.setting:last-child{border:0}
+.toggle{width:50px;height:29px;border-radius:99px;background:#d1d5db;padding:3px}.toggle i{display:block;width:23px;height:23px;border-radius:50%;background:white;transition:.2s}.toggle.on{background:#7c3aed}.toggle.on i{transform:translateX(21px)}
+.toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%) translateY(15px);background:#111827;color:#fff;padding:11px 16px;border-radius:14px;font-size:12px;opacity:0;pointer-events:none;transition:.25s;z-index:30}.toast.show{opacity:1;transform:translateX(-50%)}
+@media(min-width:521px){body{padding:0 10px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top"><div class="brand">Mithra<span>Learn</span></div><button class="icon-btn" id="themeBtn">🌙</button></header>
+
+  <main>
+    <section class="page active" id="home">
+      <div class="hero">
+        <div class="eyebrow">Your learning journey</div>
+        <h1>Vanakkam 👋</h1><p>Small practice. Big progress.</p>
+        <div class="progress-wrap">
+          <div class="circle" id="circle" style="--progress:35"><b id="progressPct">35%</b></div>
+          <div class="progress-text"><b>Learning Progress</b><span id="progressLabel">Keep going — you're building momentum.</span></div>
+        </div>
+      </div>
+
+      <div class="section-head"><h2>Today</h2><span id="dateText"></span></div>
+      <button class="speak" id="speakBtn">🎙️ Start Speaking Practice</button>
+
+      <div class="section-head"><h2>Quick Learning</h2><span>Explore</span></div>
+      <div class="grid">
+        <button class="card gradient-card purple" data-go="vocab"><div class="emoji">📚</div><h3>Vocabulary</h3><p style="color:#eee">Learn useful words</p></button>
+        <button class="card gradient-card pink" data-go="grammar"><div class="emoji">📝</div><h3>Grammar</h3><p style="color:#eee">Build clear sentences</p></button>
+      </div>
+
+      <div class="section-head"><h2>Daily Streak 🔥</h2><span>Consistency matters</span></div>
+      <div class="card streak"><div><strong id="streak">1</strong><small> days in a row</small></div><div style="font-size:35px">🔥</div></div>
+
+      <div class="section-head"><h2>AI Conversation</h2><span>Practice</span></div>
+      <div class="card ai"><div class="ai-icon">💬</div><div><h3 style="margin:0 0 4px">Talk & Learn</h3><p style="margin:0;color:var(--muted);font-size:12px">Practice a local conversation with instant prompts.</p></div><button class="action" data-go="practice">Open</button></div>
+
+      <div class="section-head"><h2>Progress Dashboard</h2><span>All time</span></div>
+      <div class="card stats"><div class="stat"><b id="words">0</b><span>Words learned</span></div><div class="stat"><b id="lessons">0</b><span>Lessons</span></div><div class="stat"><b id="sessions">0</b><span>Speaking</span></div></div>
+    </section>
+
+    <section class="page" id="learn">
+      <div class="section-head"><h2>Learn</h2><span>Build your skills</span></div>
+      <div class="grid">
+        <button class="card gradient-card purple" data-go="vocab"><div class="emoji">📚</div><h3>Vocabulary</h3><p style="color:#eee">Everyday words</p></button>
+        <button class="card gradient-card pink" data-go="grammar"><div class="emoji">📝</div><h3>Grammar</h3><p style="color:#eee">Simple patterns</p></button>
+      </div>
+      <div class="section-head"><h2>Lesson progress</h2></div>
+      <div class="card"><b>Beginner Speaking</b><div class="bar"><i id="lessonBar" style="width:35%"></i></div><p style="margin-top:8px;color:var(--muted);font-size:12px">Continue from where you stopped.</p><button class="primary" data-go="practice">Continue Lesson</button></div>
+    </section>
+
+    <section class="page" id="practice">
+      <button class="back" data-go="home">← Back to Home</button>
+      <div class="card practice-box">
+        <div class="big">🎙️</div><h2>Speaking Practice</h2>
+        <p id="prompt">Say this in Telugu: <b>“I am learning Telugu.”</b></p>
+        <button class="primary" id="practiceNext">I Practiced ✓</button>
+      </div>
+      <div class="section-head"><h2>Conversation Prompts</h2></div>
+      <div class="list">
+        <div class="row"><div class="mini">👋</div><div><b>Greeting</b><small>Say hello and introduce yourself.</small></div></div>
+        <div class="row"><div class="mini">🍛</div><div><b>Food</b><small>Talk about what you want to eat.</small></div></div>
+        <div class="row"><div class="mini">💼</div><div><b>Work</b><small>Describe your daily work.</small></div></div>
+      </div>
+    </section>
+
+    <section class="page" id="progress">
+      <div class="section-head"><h2>Your Progress</h2><span>Saved locally</span></div>
+      <div class="card">
+        <div class="stats"><div class="stat"><b id="pWords">0</b><span>Words</span></div><div class="stat"><b id="pLessons">0</b><span>Lessons</span></div><div class="stat"><b id="pSessions">0</b><span>Speaking</span></div></div>
+        <div style="margin-top:22px"><b>Overall completion</b><div class="bar"><i id="overallBar" style="width:35%"></i></div></div>
+      </div>
+      <div class="section-head"><h2>Achievements</h2></div>
+      <div class="list">
+        <div class="row"><div class="mini">🔥</div><div><b>First Day</b><small>Start your learning streak.</small></div></div>
+        <div class="row"><div class="mini">🎙️</div><div><b>Speaker</b><small>Complete your first speaking practice.</small></div></div>
+        <div class="row"><div class="mini">📚</div><div><b>Word Collector</b><small>Learn your first vocabulary word.</small></div></div>
+      </div>
+    </section>
+
+    <section class="page" id="settings">
+      <div class="section-head"><h2>Settings</h2></div>
+      <div class="card">
+        <div class="setting"><div><b>🌙 Dark Mode</b><small style="display:block;color:var(--muted);margin-top:4px">Switch appearance</small></div><button class="toggle" id="themeToggle"><i></i></button></div>
+        <div class="setting"><div><b>💾 Local Storage</b><small style="display:block;color:var(--muted);margin-top:4px">No cloud database used</small></div><span>✓</span></div>
+        <div class="setting"><div><b>🔄 Reset Progress</b><small style="display:block;color:var(--muted);margin-top:4px">Clear local learning data</small></div><button class="action" id="resetBtn">Reset</button></div>
+      </div>
+    </section>
+
+    <section class="page" id="vocab">
+      <button class="back" data-go="learn">← Back</button>
+      <div class="section-head"><h2>📚 Vocabulary</h2><span id="vocabCount">0 learned</span></div>
+      <div class="chips"><button class="chip on">Everyday</button><button class="chip">Travel</button><button class="chip">Work</button></div>
+      <div class="list" style="margin-top:14px">
+        <div class="row"><div class="mini">💧</div><div><b>Neeru</b><small>నీరు · Water</small></div><button class="action learn-word">Learn</button></div>
+        <div class="row"><div class="mini">🍚</div><div><b>Aakali</b><small>ఆకలి · Hunger</small></div><button class="action learn-word">Learn</button></div>
+        <div class="row"><div class="mini">😴</div><div><b>Nidra</b><small>నిద్ర · Sleep</small></div><button class="action learn-word">Learn</button></div>
+        <div class="row"><div class="mini">👋</div><div><b>Randi</b><small>రండి · Please come</small></div><button class="action learn-word">Learn</button></div>
+      </div>
+    </section>
+
+    <section class="page" id="grammar">
+      <button class="back" data-go="learn">← Back</button>
+      <div class="section-head"><h2>📝 Grammar</h2></div>
+      <div class="list">
+        <div class="card"><b>1. “Nenu” = I</b><p style="margin-top:7px">Use <b>Nenu</b> to talk about yourself.</p><button class="primary grammar-done">Mark Lesson Complete</button></div>
+        <div class="card"><b>2. “Naaku” = To me / I need</b><p style="margin-top:7px">Example: <b>Naaku water kaavali</b> = I need water.</p><button class="primary grammar-done">Practice This</button></div>
+        <div class="card"><b>3. “Repu” = Tomorrow</b><p style="margin-top:7px">Example: <b>Nenu repu vastanu</b> = I will come tomorrow.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom">
+    <button class="nav active" data-go="home"><b>⌂</b>Home</button>
+    <button class="nav" data-go="learn"><b>📖</b>Learn</button>
+    <button class="nav" data-go="practice"><b>🎙</b>Practice</button>
+    <button class="nav" data-go="progress"><b>◔</b>Progress</button>
+    <button class="nav" data-go="settings"><b>⚙</b>Settings</button>
+  </nav>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY="mithraLearnData";
+let data=JSON.parse(localStorage.getItem(KEY)||'null')||{progress:35,words:0,lessons:0,sessions:0,streak:1,dark:false};
+const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+function save(){localStorage.setItem(KEY,JSON.stringify(data));update()}
+function update(){
+  $("#progressPct").textContent=data.progress+"%"; $("#circle").style.setProperty("--progress",data.progress);
+  $("#streak").textContent=data.streak; $("#words").textContent=data.words; $("#lessons").textContent=data.lessons; $("#sessions").textContent=data.sessions;
+  $("#pWords").textContent=data.words; $("#pLessons").textContent=data.lessons; $("#pSessions").textContent=data.sessions;
+  $("#overallBar").style.width=data.progress+"%"; $("#lessonBar").style.width=data.progress+"%"; $("#vocabCount").textContent=data.words+" learned";
+  document.documentElement.dataset.theme=data.dark?"dark":"";
+  $("#themeToggle").classList.toggle("on",data.dark);
+  $("#themeBtn").textContent=data.dark?"☀️":"🌙";
+}
+function toast(t){const x=$("#toast");x.textContent=t;x.classList.add("show");setTimeout(()=>x.classList.remove("show"),1800)}
+function go(id){
+  $$(".page").forEach(x=>x.classList.remove("active")); $("#"+id).classList.add("active");
+  const main=["home","learn","practice","progress","settings"].includes(id)?id:"learn";
+  $$(".nav").forEach(x=>x.classList.toggle("active",x.dataset.go===main));
+  scrollTo(0,0);
+}
+$$("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+function toggleTheme(){data.dark=!data.dark;save()}
+$("#themeBtn").onclick=toggleTheme; $("#themeToggle").onclick=toggleTheme;
+$("#speakBtn").onclick=()=>{go("practice");data.sessions++;data.progress=Math.min(100,data.progress+5);save();toast("Speaking practice started 🎙️")};
+$("#practiceNext").onclick=()=>{data.sessions++;data.progress=Math.min(100,data.progress+5);save();toast("Practice completed! +5%")};
+$$(".learn-word").forEach(b=>b.onclick=()=>{if(!b.dataset.done){b.dataset.done="1";b.textContent="✓ Learned";data.words++;data.progress=Math.min(100,data.progress+3);save();toast("Vocabulary saved 📚")}});
+$$(".grammar-done").forEach(b=>b.onclick=()=>{data.lessons++;data.progress=Math.min(100,data.progress+7);save();toast("Lesson completed! 🎓")});
+$("#resetBtn").onclick=()=>{if(confirm("Reset all local progress?")){data={progress:0,words:0,lessons:0,sessions:0,streak:0,dark:data.dark};save();toast("Progress reset")}};
+$("#dateText").textContent=new Date().toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"});
+update();
+</script>
+</body>
+</html>
